@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中国古建筑数据可视化平台 - 官方地图版</title>
+    <!-- 改用 ECharts 6.0.0 + 官方中国地图文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@6.0.0/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts-maps@1.1.0/china.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "SimHei", sans-serif;
+        }
+        body {
+            background-color: #fdf6ec;
+            background-image: url('https://img0.baidu.com/it/u=1927722633,4249220291&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=800');
+            background-attachment: fixed;
+            background-size: cover;
+            background-opacity: 0.1;
+            color: #3d2b1f;
+            padding: 20px 0;
+        }
+        /* 头部标题 */
+        .header {
+            text-align: center;
+            padding: 15px 0;
+            font-size: 36px;
+            font-weight: bold;
+            color: #8c5c3a;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        /* 筛选器容器 */
+        .filter-container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto 20px;
+            padding: 15px 20px;
+            background: rgba(255, 253, 247, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(150, 120, 90, 0.1);
+            border: 1px solid #e6d5c2;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+        .filter-label {
+            font-size: 16px;
+            color: #8c5c3a;
+            font-weight: 600;
+        }
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #d4a885;
+            border-radius: 6px;
+            background: #fff;
+            color: #3d2b1f;
+            font-size: 14px;
+            min-width: 150px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-select:hover {
+            border-color: #9b6b4c;
+            box-shadow: 0 2px 8px rgba(155, 107, 76, 0.15);
+        }
+        /* 图表容器布局 */
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+            justify-content: center;
+        }
+        /* 图表盒子 */
+        .chart-box {
+            background: rgba(255, 253, 247, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(150, 120, 90, 0.15);
+            padding: 20px;
+            border: 1px solid #e6d5c2;
+            transition: all 0.3s ease;
+        }
+        .chart-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(150, 120, 90, 0.2);
+        }
+        .chart-title {
+            text-align: center;
+            font-size: 20px;
+            color: #8c5c3a;
+            margin-bottom: 15px;
+            font-weight: 600;
+            border-bottom: 2px solid #f0e6d8;
+            padding-bottom: 8px;
+        }
+        /* 图表容器强制高度 */
+        .chart-content {
+            width: 100%;
+            height: 400px !important;
+        }
+        /* 响应式适配手机 */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .chart-content {
+                height: 300px !important;
+            }
+            .header {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">中国古建筑数据可视化平台</div>
+
+    <!-- 筛选器 -->
+    <div class="filter-container">
+        <div class="filter-label">按省份筛选：</div>
+        <select id="provinceFilter" class="filter-select">
+            <option value="all">全部省份</option>
+            <option value="山西">山西</option>
+            <option value="北京">北京</option>
+            <option value="陕西">陕西</option>
+            <option value="河北">河北</option>
+            <option value="江苏">江苏</option>
+            <option value="浙江">浙江</option>
+        </select>
+
+        <div class="filter-label">按朝代筛选：</div>
+        <select id="dynastyFilter" class="filter-select">
+            <option value="all">全部朝代</option>
+            <option value="唐代">唐代</option>
+            <option value="宋代">宋代</option>
+            <option value="元代">元代</option>
+            <option value="明代">明代</option>
+            <option value="清代">清代</option>
+        </select>
+    </div>
+
+    <!-- 图表区域 -->
+    <div class="container">
+        <!-- 1. 省份分布地图 -->
+        <div class="chart-box">
+            <div class="chart-title">全国古建筑省份分布</div>
+            <div id="mapChart" class="chart-content"></div>
+        </div>
+
+        <!-- 2. 朝代数量柱状图 -->
+        <div class="chart-box">
+            <div class="chart-title">各朝代古建筑数量统计</div>
+            <div id="dynastyChart" class="chart-content"></div>
+        </div>
+
+        <!-- 3. 建筑类型饼图 -->
+        <div class="chart-box">
+            <div class="chart-title">古建筑类型占比</div>
+            <div id="typeChart" class="chart-content"></div>
+        </div>
+
+        <!-- 4. 建筑结构雷达图 -->
+        <div class="chart-box">
+            <div class="chart-title">古建筑结构类型分析</div>
+            <div id="structureChart" class="chart-content"></div>
+        </div>
+    </div>
+
+<script>
+// ===================== 原始数据（可自行修改） =====================
+// 省份数据
+const provinceData = [
+    { name: '山西', value: 148, 唐代:18, 宋代:25, 元代:12, 明代:56, 清代:37 },
+    { name: '北京', value: 96,   唐代:5,  宋代:8,  元代:10, 明代:42, 清代:31 },
+    { name: '陕西', value: 87,   唐代:20, 宋代:15, 元代:8,  明代:24, 清代:20 },
+    { name: '河北', value: 72,   唐代:6,  宋代:12, 元代:7,  明代:28, 清代:19 },
+    { name: '江苏', value: 65,   唐代:3,  宋代:10, 元代:5,  明代:22, 清代:25 },
+    { name: '浙江', value: 58,   唐代:2,  宋代:18, 元代:4,  明代:16, 清代:18 },
+    { name: '河南', value: 52,   唐代:9,  宋代:11, 元代:6,  明代:15, 清代:11 },
+    { name: '安徽', value: 43,   唐代:1,  宋代:9,   元代:3,  明代:15, 清代:15 },
+    { name: '福建', value: 39,   唐代:0,  宋代:12, 元代:2,  明代:10, 清代:15 },
+    { name: '山东', value: 33,   唐代:4,  宋代:7,   元代:3,  明代:12, 清代:7 },
+    { name: '四川', value: 28,   唐代:3,  宋代:5,   元代:2,  明代:10, 清代:8 },
+    { name: '广东', value: 22,   唐代:0,  宋代:3,   元代:1,  明代:8,   清代:10 },
+    { name: '湖北', value: 19,   唐代:2,  宋代:4,   元代:1,  明代:7,   清代:5 },
+    { name: '湖南', value: 16,   唐代:1,  宋代:3,   元代:1,  明代:6,   清代:5 },
+    { name: '甘肃', value: 14,   唐代:5,  宋代:2,   元代:1,  明代:3,   清代:3 }
+];
+
+// 朝代总数据
+const dynastyTotalData = [
+    { name: '唐代', value: 42 },
+    { name: '宋代', value: 78 },
+    { name: '元代', value: 36 },
+    { name: '明代', value: 156 },
+    { name: '清代', value: 218 }
+];
+
+// 建筑类型数据
+const typeData = [
+    { name: '宫殿', value: 85 },
+    { name: '寺庙', value: 210 },
+    { name: '园林', value: 125 },
+    { name: '民居', value: 180 },
+    { name: '塔幢', value: 95 },
+    { name: '桥梁', value: 65 }
+];
+
+// 建筑结构数据
+const structureData = [
+    { name: '抬梁式', value: 85 },
+    { name: '穿斗式', value: 70 },
+    { name: '井干式', value: 25 },
+    { name: '干栏式', value: 40 },
+    { name: '券拱式', value: 35 }
+];
+
+// ===================== 全局图表实例 =====================
+let mapChart, dynastyChart, typeChart, structureChart;
+
+// ===================== 初始化所有图表 =====================
+window.onload = function() {
+    // 等待地图文件加载完成
+    setTimeout(() => {
+        initAllCharts();
+        bindFilterEvents();
+    }, 300);
+};
+
+// 初始化图表函数
+function initAllCharts() {
+    // 1. 初始化省份地图（使用官方china地图）
+    mapChart = echarts.init(document.getElementById('mapChart'));
+    // 2. 初始化朝代柱状图
+    dynastyChart = echarts.init(document.getElementById('dynastyChart'));
+    // 3. 初始化类型饼图
+    typeChart = echarts.init(document.getElementById('typeChart'));
+    // 4. 初始化结构雷达图
+    structureChart = echarts.init(document.getElementById('structureChart'));
+
+    // 渲染初始图表
+    renderMapChart(provinceData);
+    renderDynastyChart(dynastyTotalData);
+    renderTypeChart(typeData);
+    renderStructureChart(structureData);
+
+    // 窗口自适应
+    window.addEventListener('resize', function() {
+        mapChart.resize();
+        dynastyChart.resize();
+        typeChart.resize();
+        structureChart.resize();
+    });
+}
+
+// ===================== 图表渲染函数（带动态效果） =====================
+// 1. 渲染官方地图图表（核心修改）
+function renderMapChart(data) {
+    const option = {
+        tooltip: {
+            trigger: 'item',
+            formatter: '{b}<br/>古建筑数量：{c} 处',
+            backgroundColor: 'rgba(255,253,247,0.9)',
+            borderColor: '#d4a885',
+            textStyle: { color: '#3d2b1f' }
+        },
+        visualMap: {
+            min: 0,
+            max: 150,
+            left: '5%',
+            bottom: '5%',
+            text: ['数量多', '数量少'],
+            calculable: true,
+            inRange: {
+                color: ['#f5e6d3', '#e4c5a8', '#d4a885', '#b88969', '#9b6b4c']
+            },
+            textStyle: { color: '#8c5c3a' }
+        },
+        series: [{
+            name: '古建筑数量',
+            type: 'map',
+            map: 'china', // 直接使用官方注册的china地图
+            roam: false,
+            label: {
+                show: true,
+                color: '#8c5c3a',
+                fontSize: 12
+            },
+            data: data.map(item => ({ name: item.name, value: item.value })),
+            // 地图动态效果
+            emphasis: {
+                label: { color: '#fff', fontSize: 14 },
+                itemStyle: { areaColor: '#8c5c3a' }
+            },
+            // 加载动画
+            animationDuration: 1500,
+            animationEasing: 'cubicOut'
+        }]
+    };
+    mapChart.setOption(option);
+}
+
+// 2. 渲染朝代柱状图
+function renderDynastyChart(data) {
+    const option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: { type: 'shadow' },
+            backgroundColor: 'rgba(255,253,247,0.9)',
+            borderColor: '#d4a885',
+            textStyle: { color: '#3d2b1f' }
+        },
+        grid: {
+            left: '5%',
+            right: '5%',
+            bottom: '10%',
+            top: '10%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            data: data.map(item => item.name),
+            axisLabel: { color: '#8c5c3a', fontSize: 14 },
+            axisLine: { lineStyle: { color: '#c49375' } },
+            axisTick: { lineStyle: { color: '#c49375' } }
+        },
+        yAxis: {
+            type: 'value',
+            axisLabel: { color: '#8c5c3a', formatter: '{value} 座' },
+            axisLine: { lineStyle: { color: '#c49375' } },
+            splitLine: { lineStyle: { color: '#f0e6d8' } }
+        },
+        series: [{
+            name: '古建筑数量',
+            type: 'bar',
+            barWidth: '45%',
+            data: data.map(item => item.value),
+            itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: '#d4a885' },
+                    { offset: 1, color: '#9b6b4c' }
+                ]),
+                borderRadius: [6, 6, 0, 0]
+            },
+            // 柱状图动态效果
+            emphasis: {
+                itemStyle: { color: '#8c5c3a' }
+            },
+            animationDuration: 1500,
+            animationEasing: 'elasticOut',
+            // 柱状图渐变动画
+            animationDelay: function(idx) {
+                return idx * 100;
+            }
+        }]
+    };
+    dynastyChart.setOption(option);
+}
+
+// 3. 渲染建筑类型饼图
+function renderTypeChart(data) {
+    const option = {
+        tooltip: {
+            trigger: 'item',
+            formatter: '{b}: {c} 处 ({d}%)',
+            backgroundColor: 'rgba(255,253,247,0.9)',
+            borderColor: '#d4a885',
+            textStyle: { color: '#3d2b1f' }
+        },
+        legend: {
+            orient: 'vertical',
+            right: '10%',
+            top: 'center',
+            textStyle: { color: '#8c5c3a', fontSize: 12 }
+        },
+        series: [{
+            name: '建筑类型',
+            type: 'pie',
+            radius: ['40%', '70%'],
+            center: ['35%', '50%'],
+            data: data,
+            label: {
+                show: true,
+                position: 'outside',
+                formatter: '{b}: {d}%',
+                color: '#3d2b1f'
+            },
+            // 饼图颜色
+            color: ['#d4a885', '#9b6b4c', '#c49375', '#b88969', '#e4c5a8', '#f5e6d3'],
+            // 饼图动态效果
+            emphasis: {
+                itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.2)'
+                }
+            },
+            animationDuration: 2000,
+            animationEasing: 'cubicOut',
+            // 饼图展开动画
+            animationType: 'scale'
+        }]
+    };
+    typeChart.setOption(option);
+}
+
+// 4. 渲染结构雷达图
+function renderStructureChart(data) {
+    const option = {
+        tooltip: {
+            trigger: 'item',
+            backgroundColor: 'rgba(255,253,247,0.9)',
+            borderColor: '#d4a885',
+            textStyle: { color: '#3d2b1f' }
+        },
+        radar: {
+            indicator: data.map(item => ({ name: item.name, max: 100 })),
+            shape: 'polygon',
+            splitNumber: 5,
+            name: { color: '#8c5c3a', fontSize: 12 },
+            splitLine: { lineStyle: { color: '#f0e6d8' } },
+            splitArea: { areaStyle: { color: ['rgba(255,253,247,0.5)', 'rgba(245,230,211,0.3)'] } },
+            axisLine: { lineStyle: { color: '#c49375' } }
+        },
+        series: [{
+            name: '结构占比',
+            type: 'radar',
+            data: [{
+                value: data.map(item => item.value),
+                name: '古建筑结构'
+            }],
+            itemStyle: {
+                color: '#9b6b4c',
+                opacity: 0.7
+            },
+            areaStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: 'rgba(155, 107, 76, 0.6)' },
+                    { offset: 1, color: 'rgba(212, 168, 133, 0.2)' }
+                ])
+            },
+            // 雷达图动态效果
+            animationDuration: 2000,
+            animationEasing: 'quadraticOut'
+        }]
+    };
+    structureChart.setOption(option);
+}
+
+// ===================== 筛选功能绑定 =====================
+function bindFilterEvents() {
+    // 省份筛选
+    document.getElementById('provinceFilter').addEventListener('change', function() {
+        const selectedProvince = this.value;
+        filterData(selectedProvince, document.getElementById('dynastyFilter').value);
+    });
+
+    // 朝代筛选
+    document.getElementById('dynastyFilter').addEventListener('change', function() {
+        const selectedDynasty = this.value;
+        filterData(document.getElementById('provinceFilter').value, selectedDynasty);
+    });
+}
+
+// 数据筛选核心函数
+function filterData(selectedProvince, selectedDynasty) {
+    let filteredProvinceData = [...provinceData];
+    let filteredDynastyData = [...dynastyTotalData];
+
+    // 1. 按省份筛选
+    if (selectedProvince !== 'all') {
+        filteredProvinceData = provinceData.filter(item => item.name === selectedProvince);
+        // 重新计算朝代数据
+        const dynastyKeys = ['唐代', '宋代', '元代', '明代', '清代'];
+        filteredDynastyData = dynastyKeys.map(dynasty => ({
+            name: dynasty,
+            value: filteredProvinceData[0] ? filteredProvinceData[0][dynasty] : 0
+        }));
+    }
+
+    // 2. 按朝代筛选
+    if (selectedDynasty !== 'all') {
+        // 筛选省份数据（显示该朝代各省份数量）
+        filteredProvinceData = provinceData.map(item => ({
+            name: item.name,
+            value: item[selectedDynasty] || 0
+        }));
+        // 筛选朝代数据（只显示选中朝代）
+        filteredDynastyData = dynastyTotalData.filter(item => item.name === selectedDynasty);
+    }
+
+    // 重新渲染图表
+    renderMapChart(filteredProvinceData);
+    renderDynastyChart(filteredDynastyData);
+    // 饼图和雷达图暂不筛选（可根据需求扩展）
+}
+</script>
+</body>
+</html>
