@@ -3,505 +3,602 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中国古建筑数据可视化平台 - 官方地图版</title>
-    <!-- 改用 ECharts 6.0.0 + 官方中国地图文件 -->
-    <script src="https://cdn.jsdelivr.net/npm/echarts@6.0.0/dist/echarts.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/echarts-maps@1.1.0/china.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Microsoft YaHei", "SimHei", sans-serif;
-        }
-        body {
-            background-color: #fdf6ec;
-            background-image: url('https://img0.baidu.com/it/u=1927722633,4249220291&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=800');
-            background-attachment: fixed;
-            background-size: cover;
-            background-opacity: 0.1;
-            color: #3d2b1f;
-            padding: 20px 0;
-        }
-        /* 头部标题 */
-        .header {
-            text-align: center;
-            padding: 15px 0;
-            font-size: 36px;
-            font-weight: bold;
-            color: #8c5c3a;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        /* 筛选器容器 */
-        .filter-container {
-            width: 90%;
-            max-width: 1400px;
-            margin: 0 auto 20px;
-            padding: 15px 20px;
-            background: rgba(255, 253, 247, 0.95);
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(150, 120, 90, 0.1);
-            border: 1px solid #e6d5c2;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
-            justify-content: center;
-        }
-        .filter-label {
-            font-size: 16px;
-            color: #8c5c3a;
-            font-weight: 600;
-        }
-        .filter-select {
-            padding: 8px 12px;
-            border: 1px solid #d4a885;
-            border-radius: 6px;
-            background: #fff;
-            color: #3d2b1f;
-            font-size: 14px;
-            min-width: 150px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .filter-select:hover {
-            border-color: #9b6b4c;
-            box-shadow: 0 2px 8px rgba(155, 107, 76, 0.15);
-        }
-        /* 图表容器布局 */
-        .container {
-            width: 90%;
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-            gap: 20px;
-            justify-content: center;
-        }
-        /* 图表盒子 */
-        .chart-box {
-            background: rgba(255, 253, 247, 0.95);
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(150, 120, 90, 0.15);
-            padding: 20px;
-            border: 1px solid #e6d5c2;
-            transition: all 0.3s ease;
-        }
-        .chart-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(150, 120, 90, 0.2);
-        }
-        .chart-title {
-            text-align: center;
-            font-size: 20px;
-            color: #8c5c3a;
-            margin-bottom: 15px;
-            font-weight: 600;
-            border-bottom: 2px solid #f0e6d8;
-            padding-bottom: 8px;
-        }
-        /* 图表容器强制高度 */
-        .chart-content {
-            width: 100%;
-            height: 400px !important;
-        }
-        /* 响应式适配手机 */
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
+    <title>中国古代桥梁文化博物馆</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ECharts 图表库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <!-- 中国地图GeoJSON数据（离线可用） -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
+    <!-- 自定义配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8B4513', // 古铜色主色调
+                        secondary: '#D2B48C', // 浅木色辅助色
+                        dark: '#2C1810', // 深棕色文字
+                    },
+                    fontFamily: {
+                        chinese: ['"Noto Serif SC"', 'serif'],
+                    },
+                }
             }
-            .chart-content {
-                height: 300px !important;
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
             }
-            .header {
-                font-size: 28px;
+            .bridge-card {
+                @apply bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+            }
+            .section-title {
+                @apply text-3xl font-bold text-dark mb-6 border-l-4 border-primary pl-4;
             }
         }
     </style>
+    <!-- 中文字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="header">中国古建筑数据可视化平台</div>
+<body class="bg-[#F5F5DC] font-chinese text-dark">
+    <!-- 导航栏 -->
+    <header class="sticky top-0 z-50 bg-primary text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">中国古代桥梁文化博物馆</h1>
+            <nav class="hidden md:flex space-x-6">
+                <a href="#map" class="hover:text-secondary transition-colors">分布地图</a>
+                <a href="#dynasty" class="hover:text-secondary transition-colors">朝代统计</a>
+                <a href="#structure" class="hover:text-secondary transition-colors">结构类型</a>
+                <a href="#scientist" class="hover:text-secondary transition-colors">杰出科学家</a>
+                <a href="#book" class="hover:text-secondary transition-colors">经典专著</a>
+            </nav>
+            <!-- 移动端菜单按钮 -->
+            <button id="menuBtn" class="md:hidden text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+        <!-- 移动端菜单 -->
+        <div id="mobileMenu" class="hidden md:hidden bg-primary/95 w-full">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+                <a href="#map" class="text-white hover:text-secondary transition-colors py-2">分布地图</a>
+                <a href="#dynasty" class="text-white hover:text-secondary transition-colors py-2">朝代统计</a>
+                <a href="#structure" class="text-white hover:text-secondary transition-colors py-2">结构类型</a>
+                <a href="#scientist" class="text-white hover:text-secondary transition-colors py-2">杰出科学家</a>
+                <a href="#book" class="text-white hover:text-secondary transition-colors py-2">经典专著</a>
+            </div>
+        </div>
+    </header>
 
-    <!-- 筛选器 -->
-    <div class="filter-container">
-        <div class="filter-label">按省份筛选：</div>
-        <select id="provinceFilter" class="filter-select">
-            <option value="all">全部省份</option>
-            <option value="山西">山西</option>
-            <option value="北京">北京</option>
-            <option value="陕西">陕西</option>
-            <option value="河北">河北</option>
-            <option value="江苏">江苏</option>
-            <option value="浙江">浙江</option>
-        </select>
+    <!-- 英雄区 -->
+    <section class="bg-[url('https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center h-[60vh] relative">
+        <div class="absolute inset-0 bg-dark/60"></div>
+        <div class="container mx-auto px-4 h-full flex items-center relative z-10">
+            <div class="text-white max-w-2xl">
+                <h2 class="text-5xl font-bold mb-4">一桥飞架南北，天堑变通途</h2>
+                <p class="text-xl mb-6">探索中国古代桥梁的建筑智慧与文化传承</p>
+                <a href="#map" class="bg-primary hover:bg-primary/80 text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-block">开始探索</a>
+            </div>
+        </div>
+    </section>
 
-        <div class="filter-label">按朝代筛选：</div>
-        <select id="dynastyFilter" class="filter-select">
-            <option value="all">全部朝代</option>
-            <option value="唐代">唐代</option>
-            <option value="宋代">宋代</option>
-            <option value="元代">元代</option>
-            <option value="明代">明代</option>
-            <option value="清代">清代</option>
-        </select>
+    <main class="container mx-auto px-4 py-12">
+        <!-- 1. 中国地图古代桥梁分布图 -->
+        <section id="map" class="mb-16">
+            <h2 class="section-title">中国古代桥梁分布地图</h2>
+            <div id="bridgeMap" class="w-full h-[600px] bg-white rounded-lg shadow-lg"></div>
+            <p class="mt-4 text-gray-600 text-center">点击省份可查看该地区代表性古代桥梁</p>
+        </section>
+
+        <!-- 2. 各朝代桥梁数量统计 -->
+        <section id="dynasty" class="mb-16">
+            <h2 class="section-title">各朝代桥梁数量统计</h2>
+            <div id="dynastyChart" class="w-full h-[400px] bg-white rounded-lg shadow-lg mb-8"></div>
+            
+            <!-- 代表桥梁展示区 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="dynastyBridges">
+                <!-- 动态加载代表桥梁卡片 -->
+            </div>
+        </section>
+
+        <!-- 3. 桥梁结构类型 -->
+        <section id="structure" class="mb-16">
+            <h2 class="section-title">桥梁结构类型</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- 梁桥 -->
+                <div class="bridge-card p-6">
+                    <div class="h-48 bg-gray-200 rounded-lg mb-4 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1601336709099-748c2734c38b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="梁桥" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">梁桥</h3>
+                    <p class="text-gray-600 mb-4">最古老的桥梁形式，以梁为承重结构，构造简单，施工方便</p>
+                    <button class="text-primary font-semibold hover:underline" onclick="showStructureDetail('梁桥')">查看详情 →</button>
+                </div>
+                <!-- 拱桥 -->
+                <div class="bridge-card p-6">
+                    <div class="h-48 bg-gray-200 rounded-lg mb-4 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1587293852727-02e7b7c8a79c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="拱桥" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">拱桥</h3>
+                    <p class="text-gray-600 mb-4">以拱券为承重结构，造型优美，承载能力强，代表中国古代造桥最高水平</p>
+                    <button class="text-primary font-semibold hover:underline" onclick="showStructureDetail('拱桥')">查看详情 →</button>
+                </div>
+                <!-- 索桥 -->
+                <div class="bridge-card p-6">
+                    <div class="h-48 bg-gray-200 rounded-lg mb-4 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1599658886629-693d28e040f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="索桥" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">索桥</h3>
+                    <p class="text-gray-600 mb-4">以绳索为承重结构，适用于峡谷、急流等地形，是西南地区特色桥梁</p>
+                    <button class="text-primary font-semibold hover:underline" onclick="showStructureDetail('索桥')">查看详情 →</button>
+                </div>
+                <!-- 浮桥 -->
+                <div class="bridge-card p-6">
+                    <div class="h-48 bg-gray-200 rounded-lg mb-4 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1605540436563-5bca919ae766?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="浮桥" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">浮桥</h3>
+                    <p class="text-gray-600 mb-4">以舟船为载体，架设浮于水面，可快速搭建与拆除，多用于军事与交通</p>
+                    <button class="text-primary font-semibold hover:underline" onclick="showStructureDetail('浮桥')">查看详情 →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. 杰出科学家 -->
+        <section id="scientist" class="mb-16">
+            <h2 class="section-title">杰出科学家</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- 李春 -->
+                <div class="bridge-card p-6 flex flex-col md:flex-row gap-6">
+                    <div class="w-full md:w-1/3 h-48 bg-gray-200 rounded-lg overflow-hidden">
+                        <img src="https://via.placeholder.com/300x400?text=李春" alt="李春" class="w-full h-full object-cover">
+                    </div>
+                    <div class="w-full md:w-2/3">
+                        <h3 class="text-2xl font-bold mb-2">李春</h3>
+                        <p class="text-gray-600 mb-2">隋代造桥匠师，赵州桥（安济桥）的设计者</p>
+                        <p class="text-gray-700 mb-4">李春设计的赵州桥是世界上现存年代最久远、跨度最大、保存最完整的单孔坦弧敞肩石拱桥，开创了中国桥梁建造的崭新局面，其设计工艺和艺术水平堪称世界桥梁史上的奇迹。</p>
+                        <button class="text-primary font-semibold hover:underline" onclick="showScientistDetail('李春')">查看更多 →</button>
+                    </div>
+                </div>
+                <!-- 茅以升 -->
+                <div class="bridge-card p-6 flex flex-col md:flex-row gap-6">
+                    <div class="w-full md:w-1/3 h-48 bg-gray-200 rounded-lg overflow-hidden">
+                        <img src="https://via.placeholder.com/300x400?text=茅以升" alt="茅以升" class="w-full h-full object-cover">
+                    </div>
+                    <div class="w-full md:w-2/3">
+                        <h3 class="text-2xl font-bold mb-2">茅以升</h3>
+                        <p class="text-gray-600 mb-2">中国现代桥梁工程奠基人，钱塘江大桥设计者</p>
+                        <p class="text-gray-700 mb-4">茅以升主持设计了中国第一座现代化大型桥梁——钱塘江大桥，打破了外国人"中国能建大桥的工程师还没出生"的断言，为中国桥梁事业发展奠定了坚实基础，著有《中国桥梁技术史》等经典著作。</p>
+                        <button class="text-primary font-semibold hover:underline" onclick="showScientistDetail('茅以升')">查看更多 →</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. 古代桥梁专著 -->
+        <section id="book" class="mb-16">
+            <h2 class="section-title">古代桥梁专著</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 《营造法式》 -->
+                <div class="bridge-card p-6">
+                    <div class="h-64 bg-gray-200 rounded-lg mb-4 overflow-hidden">
+                        <img src="https://via.placeholder.com/400x600?text=营造法式" alt="《营造法式》" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">《营造法式》</h3>
+                    <p class="text-gray-600 mb-2">北宋·李诫 编修</p>
+                    <p class="text-gray-700 mb-4">中国古代最完整的建筑技术书籍，详细记载了桥梁等建筑的设计、施工、材料等规范，是研究中国古代建筑的重要典籍。</p>
+                    <button class="text-primary font-semibold hover:underline" onclick="showBookDetail('营造法式')">查看详情 →</button>
+                </div>
+                <!-- 《中国桥梁技术史》 -->
+                <div class="bridge-card p-6">
+                    <div class="h-64 bg-gray-200 rounded-lg mb-4 overflow-hidden">
+                        <img src="https://via.placeholder.com/400x600?text=中国桥梁技术史" alt="《中国桥梁技术史》" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">《中国桥梁技术史》</h3>
+                    <p class="text-gray-600 mb-2">茅以升 主编</p>
+                    <p class="text-gray-700 mb-4">系统梳理了中国从古代到现代的桥梁发展历程，全面总结了中国桥梁的技术成就与文化内涵，是桥梁领域的权威著作。</p>
+                    <button class="text-primary font-semibold hover:underline" onclick="showBookDetail('中国桥梁技术史')">查看详情 →</button>
+                </div>
+                <!-- 《中国古桥志》 -->
+                <div class="bridge-card p-6">
+                    <div class="h-64 bg-gray-200 rounded-lg mb-4 overflow-hidden">
+                        <img src="https://via.placeholder.com/400x600?text=中国古桥志" alt="《中国古桥志》" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">《中国古桥志》</h3>
+                    <p class="text-gray-600 mb-2">中国公路交通史编审委员会 编</p>
+                    <p class="text-gray-700 mb-4">全面收录了中国各地代表性古代桥梁，详细记载了桥梁的历史、结构、艺术价值，是研究中国古桥的重要工具书。</p>
+                    <button class="text-primary font-semibold hover:underline" onclick="showBookDetail('中国古桥志')">查看详情 →</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚：参考网站与文献 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">参考网站</h3>
+                    <ul class="space-y-2">
+                        <li><a href="https://baike.baidu.com" target="_blank" class="hover:text-secondary transition-colors">百度百科</a></li>
+                        <li><a href="https://www.sach.gov.cn" target="_blank" class="hover:text-secondary transition-colors">中国文物网</a></li>
+                        <li><a href="https://www.muqiao.org" target="_blank" class="hover:text-secondary transition-colors">闽浙木拱桥数据库</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">参考书目</h3>
+                    <ul class="space-y-2">
+                        <li>《中国桥梁技术史》</li>
+                        <li>《中国桥梁》</li>
+                        <li>《营造法式注释》</li>
+                        <li>《中国古桥志》</li>
+                        <li>河北日报、福建日报相关报道</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center border-t border-gray-700 pt-8">
+                <p>&copy; 2025 中国古代桥梁文化博物馆 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 交互弹窗：桥梁详情 -->
+    <div id="bridgeModal" class="fixed inset-0 z-[1000] bg-black/80 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="modalTitle" class="text-3xl font-bold text-dark"></h3>
+                    <button onclick="closeModal('bridgeModal')" class="text-gray-500 hover:text-dark text-3xl">&times;</button>
+                </div>
+                <div id="modalContent" class="space-y-6">
+                    <!-- 动态加载内容 -->
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- 图表区域 -->
-    <div class="container">
-        <!-- 1. 省份分布地图 -->
-        <div class="chart-box">
-            <div class="chart-title">全国古建筑省份分布</div>
-            <div id="mapChart" class="chart-content"></div>
-        </div>
-
-        <!-- 2. 朝代数量柱状图 -->
-        <div class="chart-box">
-            <div class="chart-title">各朝代古建筑数量统计</div>
-            <div id="dynastyChart" class="chart-content"></div>
-        </div>
-
-        <!-- 3. 建筑类型饼图 -->
-        <div class="chart-box">
-            <div class="chart-title">古建筑类型占比</div>
-            <div id="typeChart" class="chart-content"></div>
-        </div>
-
-        <!-- 4. 建筑结构雷达图 -->
-        <div class="chart-box">
-            <div class="chart-title">古建筑结构类型分析</div>
-            <div id="structureChart" class="chart-content"></div>
+    <!-- 交互弹窗：结构详情 -->
+    <div id="structureModal" class="fixed inset-0 z-[1000] bg-black/80 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="structureModalTitle" class="text-3xl font-bold text-dark"></h3>
+                    <button onclick="closeModal('structureModal')" class="text-gray-500 hover:text-dark text-3xl">&times;</button>
+                </div>
+                <div id="structureModalContent" class="space-y-6">
+                    <!-- 动态加载内容 -->
+                </div>
+            </div>
         </div>
     </div>
 
-<script>
-// ===================== 原始数据（可自行修改） =====================
-// 省份数据
-const provinceData = [
-    { name: '山西', value: 148, 唐代:18, 宋代:25, 元代:12, 明代:56, 清代:37 },
-    { name: '北京', value: 96,   唐代:5,  宋代:8,  元代:10, 明代:42, 清代:31 },
-    { name: '陕西', value: 87,   唐代:20, 宋代:15, 元代:8,  明代:24, 清代:20 },
-    { name: '河北', value: 72,   唐代:6,  宋代:12, 元代:7,  明代:28, 清代:19 },
-    { name: '江苏', value: 65,   唐代:3,  宋代:10, 元代:5,  明代:22, 清代:25 },
-    { name: '浙江', value: 58,   唐代:2,  宋代:18, 元代:4,  明代:16, 清代:18 },
-    { name: '河南', value: 52,   唐代:9,  宋代:11, 元代:6,  明代:15, 清代:11 },
-    { name: '安徽', value: 43,   唐代:1,  宋代:9,   元代:3,  明代:15, 清代:15 },
-    { name: '福建', value: 39,   唐代:0,  宋代:12, 元代:2,  明代:10, 清代:15 },
-    { name: '山东', value: 33,   唐代:4,  宋代:7,   元代:3,  明代:12, 清代:7 },
-    { name: '四川', value: 28,   唐代:3,  宋代:5,   元代:2,  明代:10, 清代:8 },
-    { name: '广东', value: 22,   唐代:0,  宋代:3,   元代:1,  明代:8,   清代:10 },
-    { name: '湖北', value: 19,   唐代:2,  宋代:4,   元代:1,  明代:7,   清代:5 },
-    { name: '湖南', value: 16,   唐代:1,  宋代:3,   元代:1,  明代:6,   清代:5 },
-    { name: '甘肃', value: 14,   唐代:5,  宋代:2,   元代:1,  明代:3,   清代:3 }
-];
+    <script>
+        // 移动端菜单切换
+        document.getElementById('menuBtn').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        });
 
-// 朝代总数据
-const dynastyTotalData = [
-    { name: '唐代', value: 42 },
-    { name: '宋代', value: 78 },
-    { name: '元代', value: 36 },
-    { name: '明代', value: 156 },
-    { name: '清代', value: 218 }
-];
+        // 弹窗控制
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
 
-// 建筑类型数据
-const typeData = [
-    { name: '宫殿', value: 85 },
-    { name: '寺庙', value: 210 },
-    { name: '园林', value: 125 },
-    { name: '民居', value: 180 },
-    { name: '塔幢', value: 95 },
-    { name: '桥梁', value: 65 }
-];
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
 
-// 建筑结构数据
-const structureData = [
-    { name: '抬梁式', value: 85 },
-    { name: '穿斗式', value: 70 },
-    { name: '井干式', value: 25 },
-    { name: '干栏式', value: 40 },
-    { name: '券拱式', value: 35 }
-];
-
-// ===================== 全局图表实例 =====================
-let mapChart, dynastyChart, typeChart, structureChart;
-
-// ===================== 初始化所有图表 =====================
-window.onload = function() {
-    // 等待地图文件加载完成
-    setTimeout(() => {
-        initAllCharts();
-        bindFilterEvents();
-    }, 300);
-};
-
-// 初始化图表函数
-function initAllCharts() {
-    // 1. 初始化省份地图（使用官方china地图）
-    mapChart = echarts.init(document.getElementById('mapChart'));
-    // 2. 初始化朝代柱状图
-    dynastyChart = echarts.init(document.getElementById('dynastyChart'));
-    // 3. 初始化类型饼图
-    typeChart = echarts.init(document.getElementById('typeChart'));
-    // 4. 初始化结构雷达图
-    structureChart = echarts.init(document.getElementById('structureChart'));
-
-    // 渲染初始图表
-    renderMapChart(provinceData);
-    renderDynastyChart(dynastyTotalData);
-    renderTypeChart(typeData);
-    renderStructureChart(structureData);
-
-    // 窗口自适应
-    window.addEventListener('resize', function() {
-        mapChart.resize();
-        dynastyChart.resize();
-        typeChart.resize();
-        structureChart.resize();
-    });
-}
-
-// ===================== 图表渲染函数（带动态效果） =====================
-// 1. 渲染官方地图图表（核心修改）
-function renderMapChart(data) {
-    const option = {
-        tooltip: {
-            trigger: 'item',
-            formatter: '{b}<br/>古建筑数量：{c} 处',
-            backgroundColor: 'rgba(255,253,247,0.9)',
-            borderColor: '#d4a885',
-            textStyle: { color: '#3d2b1f' }
-        },
-        visualMap: {
-            min: 0,
-            max: 150,
-            left: '5%',
-            bottom: '5%',
-            text: ['数量多', '数量少'],
-            calculable: true,
-            inRange: {
-                color: ['#f5e6d3', '#e4c5a8', '#d4a885', '#b88969', '#9b6b4c']
-            },
-            textStyle: { color: '#8c5c3a' }
-        },
-        series: [{
-            name: '古建筑数量',
-            type: 'map',
-            map: 'china', // 直接使用官方注册的china地图
-            roam: false,
-            label: {
-                show: true,
-                color: '#8c5c3a',
-                fontSize: 12
-            },
-            data: data.map(item => ({ name: item.name, value: item.value })),
-            // 地图动态效果
-            emphasis: {
-                label: { color: '#fff', fontSize: 14 },
-                itemStyle: { areaColor: '#8c5c3a' }
-            },
-            // 加载动画
-            animationDuration: 1500,
-            animationEasing: 'cubicOut'
-        }]
-    };
-    mapChart.setOption(option);
-}
-
-// 2. 渲染朝代柱状图
-function renderDynastyChart(data) {
-    const option = {
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: { type: 'shadow' },
-            backgroundColor: 'rgba(255,253,247,0.9)',
-            borderColor: '#d4a885',
-            textStyle: { color: '#3d2b1f' }
-        },
-        grid: {
-            left: '5%',
-            right: '5%',
-            bottom: '10%',
-            top: '10%',
-            containLabel: true
-        },
-        xAxis: {
-            type: 'category',
-            data: data.map(item => item.name),
-            axisLabel: { color: '#8c5c3a', fontSize: 14 },
-            axisLine: { lineStyle: { color: '#c49375' } },
-            axisTick: { lineStyle: { color: '#c49375' } }
-        },
-        yAxis: {
-            type: 'value',
-            axisLabel: { color: '#8c5c3a', formatter: '{value} 座' },
-            axisLine: { lineStyle: { color: '#c49375' } },
-            splitLine: { lineStyle: { color: '#f0e6d8' } }
-        },
-        series: [{
-            name: '古建筑数量',
-            type: 'bar',
-            barWidth: '45%',
-            data: data.map(item => item.value),
-            itemStyle: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    { offset: 0, color: '#d4a885' },
-                    { offset: 1, color: '#9b6b4c' }
-                ]),
-                borderRadius: [6, 6, 0, 0]
-            },
-            // 柱状图动态效果
-            emphasis: {
-                itemStyle: { color: '#8c5c3a' }
-            },
-            animationDuration: 1500,
-            animationEasing: 'elasticOut',
-            // 柱状图渐变动画
-            animationDelay: function(idx) {
-                return idx * 100;
+        // 模拟数据：各朝代桥梁统计
+        const dynastyData = {
+            labels: ['隋', '唐', '宋', '元', '明', '清'],
+            values: [12, 35, 89, 42, 156, 218],
+            bridges: {
+                '隋': [
+                    {
+                        name: '赵州桥（安济桥）',
+                        dynasty: '隋代',
+                        size: '全长50.82米，跨径37.02米，高7.23米',
+                        material: '石材',
+                        feature: '世界上现存最早的敞肩石拱桥，采用坦弧敞肩设计，减轻桥身重量，增强泄洪能力',
+                        achievement: '中国历史上首座敞肩石拱桥，开创了世界敞肩拱桥的先河，体现了隋代高超的造桥技术',
+                        culture: '体现了中国古代"天人合一"的思想，造型优美，与自然环境融为一体，传承了中华民族的智慧与创造力'
+                    }
+                ],
+                '宋': [
+                    {
+                        name: '洛阳桥',
+                        dynasty: '宋代',
+                        size: '全长834米，宽7米，有46座桥墩',
+                        material: '石材',
+                        feature: '采用"种蛎固基"法，以牡蛎加固桥基，是世界上最早把生物学应用于桥梁工程的实例',
+                        achievement: '中国古代第一座跨海梁式大石桥，解决了跨海桥梁的基础稳固问题，体现了宋代先进的造桥技术',
+                        culture: '体现了中国古代劳动人民的智慧与创造力，传承了"因地制宜、巧夺天工"的工匠精神'
+                    },
+                    {
+                        name: '卢沟桥',
+                        dynasty: '金代（宋时期）',
+                        size: '全长266.5米，宽7.5米，有11孔拱券',
+                        material: '石材',
+                        feature: '拱券联拱结构，桥墩呈船形，分水尖上安装"斩龙剑"，抵御洪水冲击',
+                        achievement: '华北地区现存最古老的联拱石桥，以精美的石狮雕刻闻名于世，体现了金代高超的造桥与雕刻技术',
+                        culture: '承载了丰富的历史文化内涵，是中国古代桥梁艺术的杰出代表，体现了中华民族的审美与工艺水平'
+                    }
+                ]
+                // 其他朝代可补充
             }
-        }]
-    };
-    dynastyChart.setOption(option);
-}
+        };
 
-// 3. 渲染建筑类型饼图
-function renderTypeChart(data) {
-    const option = {
-        tooltip: {
-            trigger: 'item',
-            formatter: '{b}: {c} 处 ({d}%)',
-            backgroundColor: 'rgba(255,253,247,0.9)',
-            borderColor: '#d4a885',
-            textStyle: { color: '#3d2b1f' }
-        },
-        legend: {
-            orient: 'vertical',
-            right: '10%',
-            top: 'center',
-            textStyle: { color: '#8c5c3a', fontSize: 12 }
-        },
-        series: [{
-            name: '建筑类型',
-            type: 'pie',
-            radius: ['40%', '70%'],
-            center: ['35%', '50%'],
-            data: data,
-            label: {
-                show: true,
-                position: 'outside',
-                formatter: '{b}: {d}%',
-                color: '#3d2b1f'
+        // 初始化朝代统计图表
+        const dynastyChart = echarts.init(document.getElementById('dynastyChart'));
+        dynastyChart.setOption({
+            title: {
+                text: '中国古代各朝代桥梁数量统计',
+                left: 'center'
             },
-            // 饼图颜色
-            color: ['#d4a885', '#9b6b4c', '#c49375', '#b88969', '#e4c5a8', '#f5e6d3'],
-            // 饼图动态效果
-            emphasis: {
-                itemStyle: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: 'rgba(0, 0, 0, 0.2)'
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
                 }
             },
-            animationDuration: 2000,
-            animationEasing: 'cubicOut',
-            // 饼图展开动画
-            animationType: 'scale'
-        }]
-    };
-    typeChart.setOption(option);
-}
-
-// 4. 渲染结构雷达图
-function renderStructureChart(data) {
-    const option = {
-        tooltip: {
-            trigger: 'item',
-            backgroundColor: 'rgba(255,253,247,0.9)',
-            borderColor: '#d4a885',
-            textStyle: { color: '#3d2b1f' }
-        },
-        radar: {
-            indicator: data.map(item => ({ name: item.name, max: 100 })),
-            shape: 'polygon',
-            splitNumber: 5,
-            name: { color: '#8c5c3a', fontSize: 12 },
-            splitLine: { lineStyle: { color: '#f0e6d8' } },
-            splitArea: { areaStyle: { color: ['rgba(255,253,247,0.5)', 'rgba(245,230,211,0.3)'] } },
-            axisLine: { lineStyle: { color: '#c49375' } }
-        },
-        series: [{
-            name: '结构占比',
-            type: 'radar',
-            data: [{
-                value: data.map(item => item.value),
-                name: '古建筑结构'
-            }],
-            itemStyle: {
-                color: '#9b6b4c',
-                opacity: 0.7
+            xAxis: {
+                type: 'category',
+                data: dynastyData.labels,
+                axisLabel: {
+                    fontSize: 16
+                }
             },
-            areaStyle: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    { offset: 0, color: 'rgba(155, 107, 76, 0.6)' },
-                    { offset: 1, color: 'rgba(212, 168, 133, 0.2)' }
-                ])
+            yAxis: {
+                type: 'value',
+                name: '桥梁数量（座）'
             },
-            // 雷达图动态效果
-            animationDuration: 2000,
-            animationEasing: 'quadraticOut'
-        }]
-    };
-    structureChart.setOption(option);
-}
+            series: [{
+                name: '桥梁数量',
+                type: 'bar',
+                data: dynastyData.values,
+                itemStyle: {
+                    color: '#8B4513'
+                },
+                emphasis: {
+                    itemStyle: {
+                        color: '#D2B48C'
+                    }
+                }
+            }]
+        });
 
-// ===================== 筛选功能绑定 =====================
-function bindFilterEvents() {
-    // 省份筛选
-    document.getElementById('provinceFilter').addEventListener('change', function() {
-        const selectedProvince = this.value;
-        filterData(selectedProvince, document.getElementById('dynastyFilter').value);
-    });
+        // 图表点击事件：显示对应朝代代表桥梁
+        dynastyChart.on('click', function(params) {
+            const dynasty = params.name;
+            const bridges = dynastyData.bridges[dynasty] || [];
+            const container = document.getElementById('dynastyBridges');
+            container.innerHTML = '';
 
-    // 朝代筛选
-    document.getElementById('dynastyFilter').addEventListener('change', function() {
-        const selectedDynasty = this.value;
-        filterData(document.getElementById('provinceFilter').value, selectedDynasty);
-    });
-}
+            if (bridges.length === 0) {
+                container.innerHTML = '<p class="col-span-full text-center text-gray-500 text-xl">该朝代暂无代表桥梁数据</p>';
+                return;
+            }
 
-// 数据筛选核心函数
-function filterData(selectedProvince, selectedDynasty) {
-    let filteredProvinceData = [...provinceData];
-    let filteredDynastyData = [...dynastyTotalData];
+            bridges.forEach(bridge => {
+                const card = document.createElement('div');
+                card.className = 'bridge-card p-6';
+                card.innerHTML = `
+                    <div class="h-48 bg-gray-200 rounded-lg mb-4 overflow-hidden">
+                        <img src="https://via.placeholder.com/800x400?text=${bridge.name}" alt="${bridge.name}" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">${bridge.name}</h3>
+                    <p class="text-gray-600 mb-4">${bridge.dynasty}代表性桥梁</p>
+                    <button class="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-lg transition-colors" onclick="showBridgeDetail('${bridge.name}')">查看详情</button>
+                `;
+                container.appendChild(card);
+            });
+        });
 
-    // 1. 按省份筛选
-    if (selectedProvince !== 'all') {
-        filteredProvinceData = provinceData.filter(item => item.name === selectedProvince);
-        // 重新计算朝代数据
-        const dynastyKeys = ['唐代', '宋代', '元代', '明代', '清代'];
-        filteredDynastyData = dynastyKeys.map(dynasty => ({
-            name: dynasty,
-            value: filteredProvinceData[0] ? filteredProvinceData[0][dynasty] : 0
-        }));
-    }
+        // 初始化中国地图
+        const bridgeMap = echarts.init(document.getElementById('bridgeMap'));
+        // 模拟省份桥梁数据
+        const provinceData = [
+            { name: '北京', value: 8 },
+            { name: '河北', value: 32 },
+            { name: '山西', value: 28 },
+            { name: '上海', value: 5 },
+            { name: '江苏', value: 45 },
+            { name: '浙江', value: 68 },
+            { name: '福建', value: 52 },
+            { name: '山东', value: 38 },
+            { name: '河南', value: 42 },
+            { name: '广东', value: 35 },
+            { name: '四川', value: 48 },
+            { name: '贵州', value: 29 },
+            { name: '云南', value: 31 },
+            { name: '陕西', value: 27 },
+            { name: '甘肃', value: 22 }
+            // 其他省份可补充
+        ];
 
-    // 2. 按朝代筛选
-    if (selectedDynasty !== 'all') {
-        // 筛选省份数据（显示该朝代各省份数量）
-        filteredProvinceData = provinceData.map(item => ({
-            name: item.name,
-            value: item[selectedDynasty] || 0
-        }));
-        // 筛选朝代数据（只显示选中朝代）
-        filteredDynastyData = dynastyTotalData.filter(item => item.name === selectedDynasty);
-    }
+        bridgeMap.setOption({
+            title: {
+                text: '中国古代桥梁分布地图',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b}<br/>桥梁数量: {c}座'
+            },
+            visualMap: {
+                min: 0,
+                max: 70,
+                left: 'left',
+                top: 'bottom',
+                text: ['高', '低'],
+                calculable: true,
+                inRange: {
+                    color: ['#e0f7fa', '#80deea', '#4dd0e1', '#26c6da', '#00bcd4', '#00acc1', '#0097a7', '#00838f']
+                }
+            },
+            series: [{
+                name: '桥梁数量',
+                type: 'map',
+                map: 'china',
+                roam: true,
+                emphasis: {
+                    label: {
+                        show: true
+                    }
+                },
+                data: provinceData
+            }]
+        });
 
-    // 重新渲染图表
-    renderMapChart(filteredProvinceData);
-    renderDynastyChart(filteredDynastyData);
-    // 饼图和雷达图暂不筛选（可根据需求扩展）
-}
-</script>
+        // 地图点击事件：显示省份桥梁
+        bridgeMap.on('click', function(params) {
+            alert(`您点击了${params.name}，该地区共有${params.value}座古代桥梁，将展示代表性桥梁`);
+            // 可扩展加载对应省份桥梁数据
+        });
+
+        // 显示桥梁详情弹窗
+        function showBridgeDetail(bridgeName) {
+            // 查找对应桥梁数据
+            let bridge = null;
+            for (const dynasty in dynastyData.bridges) {
+                const found = dynastyData.bridges[dynasty].find(b => b.name === bridgeName);
+                if (found) {
+                    bridge = found;
+                    break;
+                }
+            }
+
+            if (!bridge) return;
+
+            // 填充弹窗内容
+            document.getElementById('modalTitle').textContent = bridge.name;
+            document.getElementById('modalContent').innerHTML = `
+                <div class="h-80 bg-gray-200 rounded-lg overflow-hidden">
+                    <img src="https://via.placeholder.com/1200x600?text=${bridge.name}+AI生成图" alt="${bridge.name}" class="w-full h-full object-cover">
+                    <!-- 2D图片交互热点示例 -->
+                    <div class="absolute top-1/4 left-1/3 w-8 h-8 bg-red-500/50 rounded-full cursor-pointer" title="拱券结构：${bridge.feature}"></div>
+                    <div class="absolute top-1/2 right-1/4 w-8 h-8 bg-blue-500/50 rounded-full cursor-pointer" title="桥墩设计：增强泄洪能力"></div>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold mb-2">基本信息</h4>
+                    <p><strong>朝代：</strong>${bridge.dynasty}</p>
+                    <p><strong>尺寸：</strong>${bridge.size}</p>
+                    <p><strong>材料：</strong>${bridge.material}</p>
+                    <p><strong>设计特点：</strong>${bridge.feature}</p>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold mb-2">历史成就</h4>
+                    <p>${bridge.achievement}</p>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold mb-2">文化体现</h4>
+                    <p>${bridge.culture}</p>
+                </div>
+            `;
+            openModal('bridgeModal');
+        }
+
+        // 显示结构类型详情
+        function showStructureDetail(structureName) {
+            const structureData = {
+                '梁桥': {
+                    desc: '梁桥是最古老的桥梁形式，以梁为主要承重构件，将荷载传递给桥墩和桥台，构造简单，施工方便，适用于跨度较小的河流、沟谷。',
+                    feature: '结构简单、受力明确、施工便捷、造价低廉',
+                    use: '广泛应用于古代城乡交通、水利工程，是中国古代最常见的桥梁类型',
+                    example: '泉州洛阳桥、潮州广济桥（梁桥部分）'
+                },
+                '拱桥': {
+                    desc: '拱桥以拱券为承重结构，利用拱的推力将荷载传递给桥墩，造型优美，承载能力强，是中国古代桥梁的代表类型，体现了中国古代造桥的最高水平。',
+                    feature: '造型优美、承载能力强、跨越能力大、耐久性好',
+                    use: '适用于大跨度河流、峡谷，是中国古代大型桥梁的主要形式',
+                    example: '赵州桥、卢沟桥、苏州宝带桥'
+                },
+                '索桥': {
+                    desc: '索桥以绳索（藤索、竹索、铁索）为承重结构，悬挂于两岸，适用于峡谷、急流等地形，是西南地区的特色桥梁，体现了中国古代劳动人民的智慧。',
+                    feature: '跨越能力大、适用于复杂地形、施工难度高',
+                    use: '西南山区、峡谷河流，是古代西南地区交通的重要保障',
+                    example: '四川泸定桥、贵州盘江桥'
+                },
+                '浮桥': {
+                    desc: '浮桥以舟船为载体，将梁架设于舟船之上，浮于水面，可快速搭建与拆除，多用于军事、临时交通，是中国古代最早的桥梁形式之一。',
+                    feature: '搭建快速、可移动、适用于宽阔河流',
+                    use: '军事行动、临时交通、渡口通行',
+                    example: '蒲津渡浮桥、黄河浮桥'
+                }
+            };
+
+            const data = structureData[structureName];
+            if (!data) return;
+
+            document.getElementById('structureModalTitle').textContent = structureName;
+            document.getElementById('structureModalContent').innerHTML = `
+                <div class="h-64 bg-gray-200 rounded-lg overflow-hidden">
+                    <img src="https://via.placeholder.com/1200x500?text=${structureName}+结构示意图" alt="${structureName}结构" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold mb-2">结构概述</h4>
+                    <p>${data.desc}</p>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold mb-2">结构特点</h4>
+                    <p>${data.feature}</p>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold mb-2">用途与应用</h4>
+                    <p>${data.use}</p>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold mb-2">代表桥梁</h4>
+                    <p>${data.example}</p>
+                </div>
+            `;
+            openModal('structureModal');
+        }
+
+        // 其他弹窗函数（科学家、专著）可按相同逻辑扩展
+        function showScientistDetail(name) {
+            alert(`将展示${name}的详细信息`);
+            // 可扩展弹窗内容
+        }
+
+        function showBookDetail(name) {
+            alert(`将展示${name}的详细信息`);
+            // 可扩展弹窗内容
+        }
+
+        // 窗口大小变化时重置图表
+        window.addEventListener('resize', function() {
+            dynastyChart.resize();
+            bridgeMap.resize();
+        });
+
+        // 页面加载完成后自动触发隋代数据展示
+        window.addEventListener('load', function() {
+            dynastyChart.dispatchAction({
+                type: 'highlight',
+                seriesIndex: 0,
+                dataIndex: 0
+            });
+            // 模拟点击隋代
+            dynastyChart.on('click', {seriesIndex: 0, dataIndex: 0}, function(){});
+            document.getElementById('dynastyBridges').innerHTML = `
+                <div class="bridge-card p-6">
+                    <div class="h-48 bg-gray-200 rounded-lg mb-4 overflow-hidden">
+                        <img src="https://via.placeholder.com/800x400?text=赵州桥（安济桥）" alt="赵州桥" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">赵州桥（安济桥）</h3>
+                    <p class="text-gray-600 mb-4">隋代代表性桥梁</p>
+                    <button class="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-lg transition-colors" onclick="showBridgeDetail('赵州桥（安济桥）')">查看详情</button>
+                </div>
+            `;
+        });
+    </script>
 </body>
 </html>
