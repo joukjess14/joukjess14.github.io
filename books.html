@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>古桥文献档案 - 中国古代桥梁文化博物馆</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8B4513',
+                        secondary: '#D2B48C',
+                        dark: '#2C1810',
+                    },
+                    fontFamily: {
+                        chinese: ['"Noto Serif SC"', 'serif'],
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 1s ease-out forwards',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .bridge-card {
+                @apply bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+            }
+            .section-title {
+                @apply text-3xl font-bold text-dark mb-6 border-l-4 border-primary pl-4;
+            }
+            .reveal {
+                opacity: 0;
+                transform: translateY(40px);
+                transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+            }
+            .reveal.active {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <link rel="preconnect" href="https://gs.jurieo.com/gemini/fonts-googleapis">
+    <link rel="preconnect" href="https://gs.jurieo.com/gemini/fonts-gstatic" crossorigin>
+    <link
+        href="https://gs.jurieo.com/gemini/fonts-googleapis/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="bg-[#F5F5DC] font-chinese text-dark">
+    <header class="sticky top-0 z-50 bg-primary text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <svg class="w-6 h-6 transform transition-transform group-hover:-translate-x-1" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                <h1 class="text-2xl font-bold">中国古代桥梁文化博物馆 <span
+                        class="text-sm font-normal text-secondary ml-2 border-l border-secondary pl-2">文献档案馆</span></h1>
+            </a>
+            <nav class="hidden md:flex space-x-6">
+                <a href="index.html" class="hover:text-secondary transition-colors">返回主页</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="bg-dark text-white py-16 relative overflow-hidden">
+        <div
+            class="absolute inset-0 opacity-20 bg-[url('https://via.placeholder.com/1920x400?text=古籍纹理')] bg-cover bg-center">
+        </div>
+        <div class="container mx-auto px-4 relative z-10 text-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">古代桥梁经典专著全录</h2>
+            <p class="text-secondary text-lg max-w-2xl mx-auto">汇集千年营建智慧，品读先贤典籍。这里收录了中国历史上关于桥梁建筑、水文地理及现代考证的最核心文献。</p>
+        </div>
+    </section>
+
+    <main class="container mx-auto px-4 py-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <div class="bridge-card p-6 reveal">
+                <!-- 建议替换为这个版本 -->
+                <div class="h-72 mb-4 overflow-hidden flex items-center justify-center p-2">
+                    <img src="/images/books/yingzaofashi.png" alt="《营造法式》"
+                        class="max-h-full w-auto shadow-md object-contain hover:scale-105 transition-transform">
+                </div>
+                <h3 class="text-xl font-bold mb-2">《营造法式》</h3>
+                <p class="text-gray-600 mb-2">北宋 · 李诫 编修</p>
+                <p class="text-gray-700 mb-4 line-clamp-3">中国古代最完整的建筑技术书籍，详细记载了桥梁等建筑的设计、施工、材料等规范，是研究中国古代建筑的重要典籍。</p>
+                <button class="text-primary font-semibold hover:underline" onclick="showBookDetail('营造法式')">研读详情
+                    →</button>
+            </div>
+
+            <div class="bridge-card p-6 reveal" style="transition-delay: 100ms;">
+                <!-- 建议替换为这个版本 -->
+                <div class="h-72 mb-4 overflow-hidden flex items-center justify-center p-2">
+                    <img src="/images/books/zhongguoqiaoliangjishushi.jpeg" alt="《中国桥梁技术史》"
+                        class="max-h-full w-auto shadow-md object-contain hover:scale-105 transition-transform">
+                </div>
+                <h3 class="text-xl font-bold mb-2">《中国桥梁技术史》</h3>
+                <p class="text-gray-600 mb-2">茅以升 主编</p>
+                <p class="text-gray-700 mb-4 line-clamp-3">系统梳理了中国从古代到现代的桥梁发展历程，全面总结了中国桥梁的技术成就与文化内涵，是桥梁领域的权威著作。</p>
+                <button class="text-primary font-semibold hover:underline" onclick="showBookDetail('中国桥梁技术史')">研读详情
+                    →</button>
+            </div>
+
+            <div class="bridge-card p-6 reveal" style="transition-delay: 200ms;">
+                <!-- 建议替换为这个版本 -->
+                <div class="h-72 mb-4 overflow-hidden flex items-center justify-center p-2">
+                    <img src="/images/books/zhongguoguqiaozhi.png" alt="《中国古桥志》"
+                        class="max-h-full w-auto shadow-md object-contain hover:scale-105 transition-transform">
+                </div>
+                <h3 class="text-xl font-bold mb-2">《中国古桥志》</h3>
+                <p class="text-gray-600 mb-2">中国公路交通史编审委员会</p>
+                <p class="text-gray-700 mb-4 line-clamp-3">全面收录了中国各地代表性古代桥梁，详细记载了桥梁的历史、结构、艺术价值，是研究中国古桥的重要工具书。</p>
+                <button class="text-primary font-semibold hover:underline" onclick="showBookDetail('中国古桥志')">研读详情
+                    →</button>
+            </div>
+
+            <div class="bridge-card p-6 reveal">
+                <!-- 建议替换为这个版本 -->
+                <div class="h-72 mb-4 overflow-hidden flex items-center justify-center p-2">
+                    <img src="/images/books/shuijingzhu.png" alt="《水经注》"
+                        class="max-h-full w-auto shadow-md object-contain hover:scale-105 transition-transform">
+                </div>
+                <h3 class="text-xl font-bold mb-2">《水经注》</h3>
+                <p class="text-gray-600 mb-2">北魏 · 郦道元 撰</p>
+                <p class="text-gray-700 mb-4 line-clamp-3">全面系统的地理学巨著。书中不仅记述了大量河流的水文，还详细记载了跨越这些河流的众多早期古代桥梁的形制、位置和历史传说。
+                </p>
+                <button class="text-primary font-semibold hover:underline" onclick="showBookDetail('水经注')">研读详情
+                    →</button>
+            </div>
+
+            <div class="bridge-card p-6 reveal" style="transition-delay: 100ms;">
+                <div class="h-72 mb-4 overflow-hidden flex items-center justify-center p-2">
+                    <img src="/images/books/tiangongkaiwu.jpg" alt="《天工开物》"
+                        class="max-h-full w-auto shadow-md object-contain hover:scale-105 transition-transform">
+                </div>
+                <h3 class="text-xl font-bold mb-2">《天工开物》</h3>
+                <p class="text-gray-600 mb-2">明代 · 宋应星 著</p>
+                <p class="text-gray-700 mb-4 line-clamp-3">被誉为中国17世纪的工艺百科全书。书中涉及了土木、舟车等工程技术，为后人研究明代及以前的桥梁材料与营造工艺提供了珍贵史料。
+                </p>
+                <button class="text-primary font-semibold hover:underline" onclick="showBookDetail('天工开物')">研读详情
+                    →</button>
+            </div>
+
+            <div class="bridge-card p-6 reveal" style="transition-delay: 200ms;">
+                <div class="h-72 mb-4 overflow-hidden flex items-center justify-center p-2">
+                    <img src="/images/books/mengxibitan.png" alt="《梦溪笔谈》"
+                        class="max-h-full w-auto shadow-md object-contain hover:scale-105 transition-transform">
+                </div>
+                <h3 class="text-xl font-bold mb-2">《梦溪笔谈》</h3>
+                <p class="text-gray-600 mb-2">北宋 · 沈括 著</p>
+                <p class="text-gray-700 mb-4 line-clamp-3">中国科学史上的里程碑。书中记载了丰富的建筑与工程案例，包括对桥梁结构的力学探讨以及著名工匠的造桥事迹。</p>
+                <button class="text-primary font-semibold hover:underline" onclick="showBookDetail('梦溪笔谈')">研读详情
+                    →</button>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white py-12 mt-8">
+        <div class="container mx-auto px-4">
+            <div class="text-center border-t border-gray-700 pt-8">
+                <p>&copy; 2025 中国古代桥梁文化博物馆 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="bridgeModal" class="fixed inset-0 z-[1000] bg-black/80 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="modalTitle" class="text-3xl font-bold text-dark"></h3>
+                    <button onclick="closeModal('bridgeModal')"
+                        class="text-gray-500 hover:text-dark text-3xl">&times;</button>
+                </div>
+                <div id="modalContent" class="space-y-4">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 弹窗控制逻辑
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // 扩充版的书籍详情数据
+        function showBookDetail(name) {
+            const bookData = {
+                '营造法式': {
+                    author: '李诫 (北宋)',
+                    desc: '刊行于1103年，是当时建筑设计与施工的百科全书。',
+                    content: '书中规定了“材”的模数制度，对桥梁的石作、木作工艺有极其严谨的规范，确保了古代工程的标准化与质量。',
+                    value: '中国古代建筑学的里程碑。'
+                },
+                '中国桥梁技术史': {
+                    author: '茅以升 主编',
+                    desc: '现代系统研究中国桥梁发展的开山之作。',
+                    content: '从原始桥梁到现代钢筋混凝土大桥，全景式记录了中国造桥技术的演进，包含大量实地考察数据与手绘图纸。',
+                    value: '桥梁学科的必读书目与研究指南。'
+                },
+                '中国古桥志': {
+                    author: '中国公路交通史编审委员会 编',
+                    desc: '全面普查与收录全国各地古桥的大型工具书。',
+                    content: '详细记载了各省份著名古桥的经纬度位置、建造年代、结构尺寸与历史变迁。',
+                    value: '古桥文物保护与研究的重要数据底座。'
+                },
+                '水经注': {
+                    author: '郦道元 (北魏)',
+                    desc: '中国古代最为全面、系统的综合性地理著作。',
+                    content: '全书不仅以水系为纲，更在其中详细记录了跨越河流的著名古桥（如早期黄河浮桥、渭水桥等）的样貌及兴废经过。',
+                    value: '考证早期桥梁水文环境的绝佳史料。'
+                },
+                '天工开物': {
+                    author: '宋应星 (明代)',
+                    desc: '中国古代极为罕见的综合性科学技术著作。',
+                    content: '书中的《舟车》、《陶埏》等章节，涉及了造桥所需的砖石烧造、木材砍伐及运输营建等基础工程技术。',
+                    value: '剖析古代桥梁材料学与营造法的钥匙。'
+                },
+                '梦溪笔谈': {
+                    author: '沈括 (北宋)',
+                    desc: '被英国学者李约瑟誉为“中国科学史上的坐标”。',
+                    content: '书中记录了如“喻皓造木塔”等诸多建筑奇闻，并对当时包括造桥在内的土木工程中的力学、测量学原理进行了深入探讨。',
+                    value: '展现宋代极高科技水平与工匠智慧的窗口。'
+                }
+            };
+
+            const data = bookData[name] || { author: '未知', desc: '暂无详细介绍', content: '', value: '' };
+
+            document.getElementById('modalTitle').textContent = `《${name}》`;
+            document.getElementById('modalContent').innerHTML = `
+                <div class="bg-[#FAF8F5] border border-secondary/30 p-6 rounded-lg mb-4 text-center">
+                    <p class="text-xl text-primary font-bold mb-1">${data.author}</p>
+                    <p class="text-gray-600 text-sm">编著</p>
+                </div>
+                <div class="mb-4">
+                    <h4 class="font-bold text-dark border-l-4 border-primary pl-2 mb-2">简要题解</h4>
+                    <p class="text-gray-700 leading-relaxed">${data.desc}</p>
+                </div>
+                <div class="mb-4">
+                    <h4 class="font-bold text-dark border-l-4 border-primary pl-2 mb-2">桥梁相关内容</h4>
+                    <p class="text-gray-700 leading-relaxed">${data.content}</p>
+                </div>
+                <div class="bg-primary/5 p-4 rounded text-dark italic border border-primary/20 mt-6">
+                    <strong>馆藏评语：</strong>${data.value}
+                </div>
+            `;
+            openModal('bridgeModal');
+        }
+
+        // 简单的滚动动画监听
+        document.addEventListener('DOMContentLoaded', function () {
+            const observerOptions = { threshold: 0.1 };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+
+</html>

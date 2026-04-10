@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中国古代桥梁文化博物馆</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ECharts 图表库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <!-- 中国地图GeoJSON数据（离线可用） -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
+    <!-- 自定义配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8B4513', // 古铜色主色调
+                        secondary: '#D2B48C', // 浅木色辅助色
+                        dark: '#2C1810', // 深棕色文字
+                    },
+                    fontFamily: {
+                        chinese: ['"Noto Serif SC"', 'serif'],
+                    },
+                    // ============ 新增动画配置 ============
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 1s ease-out forwards',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .bridge-card {
+                @apply bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+            }
+            .section-title {
+                @apply text-3xl font-bold text-dark mb-6 border-l-4 border-primary pl-4;
+            }
+            
+            /* ============ 新增渐出基础样式 ============ */
+            .reveal {
+                opacity: 0;
+                transform: translateY(40px);
+                transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+            }
+            .reveal.active {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            /* 延迟类，用于生成错落有致的效果 */
+            .delay-100 { transition-delay: 100ms; }
+            .delay-200 { transition-delay: 200ms; }
+            .delay-300 { transition-delay: 300ms; }
+            .delay-400 { transition-delay: 400ms; }
+        }
+        @layer utilities {
+            /* 按钮组容器 */
+            .flex-btn-group {
+                @apply flex w-full gap-3 mt-4 overflow-hidden;
+            }
+            /* 基础按钮样式 */
+            .flex-btn {
+                @apply flex-1 flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-bold transition-all duration-500 ease-in-out whitespace-nowrap overflow-hidden relative;
+            }
+            /* 鼠标悬停时：当前按钮变长 (flex 比例从 1 变为 3) */
+            .flex-btn:hover {
+                @apply flex-[3];
+            }
+            /* 按钮具体配色 */
+            .btn-primary {
+                @apply bg-primary text-white;
+            }
+            .btn-outline {
+                @apply border border-primary text-primary hover:bg-primary/10;
+            }
+            /* 确保按钮文字在变短时不换行，保持整洁 */
+            .flex-btn span {
+                @apply block transition-opacity duration-300;
+            }
+        }
+        @layer utilities {
+            /* 科学家头像悬停缩放 */
+            .scientist-avatar {
+                @apply w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-secondary/30 overflow-hidden cursor-pointer transition-all duration-500 hover:border-primary hover:scale-110 shadow-lg;
+            }
+            /* 介绍窗口的进入动画 */
+            .detail-fade-in {
+                animation: detailSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+            @keyframes detailSlideIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .active-avatar {
+                @apply border-primary ring-4 ring-primary/20 scale-110;
+            }
+        }
+        @layer utilities {
+    /* 详情容器的基础样式 */
+    #scientist-detail-window {
+        @apply bg-white rounded-3xl shadow-2xl border border-secondary/20 relative overflow-hidden;
+        /* 使用 grid 布局来实现高度动画 */
+        display: grid;
+        grid-template-rows: 1fr; 
+        transition: grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+    }
+
+    /* 当内容改变时触发的内部容器动画 */
+    .content-wrapper {
+        @apply overflow-hidden;
+    }
+
+    /* 文本内容本身的淡入淡出和位移 */
+    .text-content-animate {
+        animation: textReflow 0.5s ease-out forwards;
+    }
+
+    @keyframes textReflow {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 之前定义的头像样式保留并优化 */
+    .scientist-avatar {
+        width: 6rem; /* w-24 */
+        height: 6rem; /* h-24 */
+        border-radius: 9999px; /* rounded-full */
+        border-width: 4px; /* border-4 */
+        border-color: rgba(100, 116, 139, 0.3); /* border-secondary/30, fallback color */
+        overflow: hidden;
+        cursor: pointer;
+        transition: border-color 0.5s, transform 0.5s;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1); /* shadow-lg */
+    }
+    @media (min-width: 768px) {
+        .scientist-avatar {
+            width: 8rem; /* md:w-32 */
+            height: 8rem; /* md:h-32 */
+        }
+    }
+    .scientist-avatar:hover {
+        border-color: #f59e42; /* Tailwind border-primary */
+        transform: scale(1.10); /* scale-110 */
+    }
+    .active-avatar {
+        border-color: #f59e42; /* Tailwind border-primary */
+        box-shadow: 0 0 0 4px rgba(245, 158, 66, 0.2); /* ring-4 ring-primary/20 */
+        transform: scale(1.10); /* scale-110 */
+    }
+    .cubic-bezier {
+    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    /* 针对所有详情框隐藏滚动条 */
+    /* 自定义滚动条整体样式 */
+/* 针对所有详情框隐藏滚动条 */
+#bridgeModalContent, 
+#structureModalContent,
+.overflow-y-auto {
+    /* 隐藏火狐下的滚动条 */
+    scrollbar-width: none; 
+    /* 隐藏 IE 下的滚动条 */
+    -ms-overflow-style: none; 
+}
+
+/* 针对 Chrome, Safari 和 Edge 隐藏滚动条 */
+#bridgeModalContent::-webkit-scrollbar,
+.overflow-y-auto::-webkit-scrollbar {
+    display: none;
+}
+}
+html {
+    scroll-behavior: smooth;
+}
+
+/* 2. 解决吸顶导航遮挡：给所有 section 设置滚动边距 */
+/* 这里的 80px 应该略大于你导航栏的高度，这样跳转后标题下方会留出一些“呼吸感” */
+section {
+    scroll-margin-top: 80px;
+}
+
+/* 针对“杰出科学家”版块，如果还是觉得不居中，可以单独调大偏移量 */
+#scientists {
+    scroll-margin-top: 100px;
+}
+    </style>
+    <!-- 中文字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="bg-[#F5F5DC] font-chinese text-dark">
+    <!-- 导航栏 -->
+    <!-- 导航栏 -->
+    <header class="sticky top-0 z-50 bg-primary text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-wider">中国古代桥梁文化博物馆</h1>
+
+            <!-- 桌面端菜单：加入相对定位与 Group 动画 -->
+            <nav class="hidden md:flex space-x-8">
+                <a href="#map" class="relative py-1 transition-all duration-300 hover:text-secondary group">
+                    分布地图
+                    <span
+                        class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#dynasty" class="relative py-1 transition-all duration-300 hover:text-secondary group">
+                    朝代统计
+                    <span
+                        class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#famous-bridges" class="relative py-1 transition-all duration-300 hover:text-secondary group">
+                    四大名桥
+                    <span
+                        class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <!-- 修正 ID：从 #scientist 改为 #scientists -->
+                <a href="#scientists" class="relative py-1 transition-all duration-300 hover:text-secondary group">
+                    杰出科学家
+                    <span
+                        class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#book" class="relative py-1 transition-all duration-300 hover:text-secondary group">
+                    经典专著
+                    <span
+                        class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
+                </a>
+            </nav>
+
+            <!-- 移动端菜单按钮 -->
+            <button id="menuBtn" class="md:hidden text-white focus:outline-none transition-transform active:scale-90">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- 移动端菜单：加入滑入侧偏动画 -->
+        <div id="mobileMenu" class="hidden md:hidden bg-primary/95 w-full border-t border-white/10">
+            <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+                <a href="#map"
+                    class="text-white hover:text-secondary transition-all duration-300 hover:pl-4 border-b border-white/5 pb-2">分布地图</a>
+                <a href="#dynasty"
+                    class="text-white hover:text-secondary transition-all duration-300 hover:pl-4 border-b border-white/5 pb-2">朝代统计</a>
+                <a href="#famous-bridges"
+                    class="text-white hover:text-secondary transition-all duration-300 hover:pl-4 border-b border-white/5 pb-2">四大名桥</a>
+                <!-- 修正 ID -->
+                <a href="#scientists"
+                    class="text-white hover:text-secondary transition-all duration-300 hover:pl-4 border-b border-white/5 pb-2">杰出科学家</a>
+                <a href="#book" class="text-white hover:text-secondary transition-all duration-300 hover:pl-4">经典专著</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 英雄区 -->
+    <section class="bg-[url('/images/cover/bg.png')] bg-cover bg-center h-[60vh] relative">
+        <div class="absolute inset-0 bg-dark/60"></div>
+        <div class="container mx-auto px-4 h-full flex items-center relative z-10">
+            <div class="text-white max-w-2xl">
+                <h2 class="text-5xl font-bold mb-4 opacity-0 animate-fade-in-up" style="animation-delay: 0.2s;">
+                    一桥飞架南北，天堑变通途</h2>
+                <p class="text-xl mb-6 opacity-0 animate-fade-in-up" style="animation-delay: 0.4s;">探索中国古代桥梁的建筑智慧与文化传承
+                </p>
+                <a href="#map"
+                    class="bg-primary hover:bg-primary/80 text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-block opacity-0 animate-fade-in-up"
+                    style="animation-delay: 0.6s;">开始探索</a>
+            </div>
+        </div>
+    </section>
+
+    <main class="container mx-auto px-4 py-12">
+        <!-- 1. 中国地图古代桥梁分布图 -->
+        <section id="map" class="mb-16">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-3xl font-bold text-dark border-l-4 border-primary pl-4">中国古代桥梁分布地图</h2>
+                <span class="hidden md:inline-block text-sm text-primary/80 bg-secondary/20 px-3 py-1 rounded-full">
+                    💡 支持鼠标滚轮缩放与拖拽
+                </span>
+            </div>
+
+            <div class="p-2 bg-secondary/30 rounded-xl shadow-2xl border border-secondary/50">
+                <div class="p-1 bg-[#FAF8F5] rounded-lg border-2 border-dashed border-secondary">
+                    <div id="bridgeMap" class="w-full h-[600px] rounded-lg"></div>
+                </div>
+            </div>
+
+            <p class="mt-6 text-gray-600 text-center flex items-center justify-center gap-2">
+                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122">
+                    </path>
+                </svg>
+                点击高亮省份，可查看该地区代表性古代桥梁详情
+            </p>
+        </section>
+
+        <!-- 2. 各朝代桥梁数量统计 -->
+        <section id="dynasty" class="mb-16">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                <h2 class="section-title mb-0">历代造桥规模演变</h2>
+                <div class="flex gap-2">
+                    <span class="text-sm text-primary/70 flex items-center">
+                        <span class="w-3 h-3 bg-primary rounded-full animate-pulse mr-2"></span>
+                        交互提示：点击柱体查看该朝代名桥
+                    </span>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-xl border border-secondary/30 relative overflow-hidden">
+                <div class="absolute top-0 right-0 opacity-5 pointer-events-none">
+                    <svg width="200" height="200" viewBox="0 0 100 100">
+                        <path d="M0 50 Q 25 0 50 50 T 100 50" fill="none" stroke="#8B4513" stroke-width="2" />
+                    </svg>
+                </div>
+
+                <div id="dynastyChart" class="w-full h-[450px]"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10" id="dynastyBridges">
+                <div class="col-span-full text-center py-12 border-2 border-dashed border-secondary/30 rounded-xl">
+                    <p class="text-secondary font-medium">点击上方图表中的朝代，溯源千年营建智慧</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. 四大名桥 -->
+        <section id="famous-bridges" class="mb-16">
+            <h2 class="section-title">中国四大名桥</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                <div class="bridge-card p-6 flex flex-col md:flex-row gap-6 border-t-4 border-primary">
+                    <div class="w-full md:w-2/5 h-52 bg-gray-200 rounded-lg overflow-hidden shrink-0">
+                        <img src="images\famous_bridges\zhaozhou_1.png" alt="赵州桥" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex flex-col justify-between flex-grow">
+                        <div>
+                            <h3 class="text-2xl font-bold text-dark mb-2">赵州桥</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                                隋代李春造，世界现存最早的敞肩石拱桥。其“敞肩”设计通过在大拱上加小拱，不仅减轻自重，更极大地增强了泄洪能力。
+                            </p>
+                        </div>
+                        <div class="flex-btn-group">
+                            <button class="flex-btn btn-primary" onclick="alert('3D模型加载中...')">
+                                <span>📦 展示3D模型</span>
+                            </button>
+                            <button class="flex-btn btn-outline" onclick="showBridgeDetail('赵州桥（安济桥）')">
+                                <span>📖 详情</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bridge-card p-6 flex flex-col md:flex-row gap-6 border-t-4 border-primary">
+                    <div class="w-full md:w-2/5 h-52 bg-gray-200 rounded-lg overflow-hidden shrink-0">
+                        <img src="images\famous_bridges\luoyang_1.png" alt="洛阳桥" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex flex-col justify-between flex-grow">
+                        <div>
+                            <h3 class="text-2xl font-bold text-dark mb-2">洛阳桥</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                                北宋跨海梁桥，首创“筏型基础”与“种蛎固基”法。利用牡蛎的生长将桥基石块凝成整体，展现了古代应对海潮的生态智慧。
+                            </p>
+                        </div>
+                        <div class="flex-btn-group">
+                            <button class="flex-btn btn-primary" onclick="alert('3D模型加载中...')">
+                                <span>📦 展示3D模型</span>
+                            </button>
+                            <button class="flex-btn btn-outline" onclick="showBridgeDetail('洛阳桥（万安桥）')">
+                                <span>📖 详情</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bridge-card p-6 flex flex-col md:flex-row gap-6 border-t-4 border-primary">
+                    <div class="w-full md:w-2/5 h-52 bg-gray-200 rounded-lg overflow-hidden shrink-0">
+                        <img src="images\famous_bridges\lugou_1.png" alt="卢沟桥" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex flex-col justify-between flex-grow">
+                        <div>
+                            <h3 class="text-2xl font-bold text-dark mb-2">卢沟桥</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                                金代联拱石桥，以“卢沟晓月”闻名。桥柱上数百只形态各异的石狮栩栩如生，其坚固的联拱结构历经数百年洪水与战火依然屹立。
+                            </p>
+                        </div>
+                        <div class="flex-btn-group">
+                            <button class="flex-btn btn-primary" onclick="alert('3D模型加载中...')">
+                                <span>📦 展示3D模型</span>
+                            </button>
+                            <button class="flex-btn btn-outline" onclick="showBridgeDetail('卢沟桥')">
+                                <span>📖 详情</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bridge-card p-6 flex flex-col md:flex-row gap-6 border-t-4 border-primary">
+                    <div class="w-full md:w-2/5 h-52 bg-gray-200 rounded-lg overflow-hidden shrink-0">
+                        <img src="images\famous_bridges\guangji_1.png" alt="广济桥" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex flex-col justify-between flex-grow">
+                        <div>
+                            <h3 class="text-2xl font-bold text-dark mb-2">广济桥</h3>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                                宋代始建，世界最早的启闭式桥梁。其“十八梭船廿四洲”结构集梁桥、拱桥、浮桥于一体，白日连桥，夜间启航。
+                            </p>
+                        </div>
+                        <div class="flex-btn-group">
+                            <button class="flex-btn btn-primary" onclick="alert('3D模型加载中...')">
+                                <span>📦 展示3D模型</span>
+                            </button>
+                            <button class="flex-btn btn-outline" onclick="showBridgeDetail('广济桥（湘子桥）')">
+                                <span>📖 详情</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 4. 杰出科学家 -->
+        <section id="scientists" class="mb-24">
+            <h2 class="section-title">杰出科学家</h2>
+
+            <div class="flex justify-center flex-wrap gap-8 md:gap-16 mb-12">
+                <div class="flex flex-col items-center group" onclick="showScientist('lichun', this)">
+                    <div class="scientist-avatar" id="avatar-lichun">
+                        <img src="images\scientists\lichun.png" class="w-full h-full object-cover object-top">
+                    </div>
+                    <span class="mt-4 font-bold text-lg text-dark group-hover:text-primary transition-colors">李春</span>
+                </div>
+                <div class="flex flex-col items-center group" onclick="showScientist('caixiang', this)">
+                    <div class="scientist-avatar" id="avatar-caixiang">
+                        <img src="images/scientists/caixiang.png" class="w-full h-full object-cover">
+                    </div>
+                    <span class="mt-4 font-bold text-lg text-dark group-hover:text-primary transition-colors">蔡襄</span>
+                </div>
+                <div class="flex flex-col items-center group" onclick="showScientist('maoyisheng', this)">
+                    <div class="scientist-avatar" id="avatar-maoyisheng">
+                        <img src="images/scientists/maoyisheng.png" class="w-full h-full object-cover">
+                    </div>
+                    <span class="mt-4 font-bold text-lg text-dark group-hover:text-primary transition-colors">茅以升</span>
+                </div>
+            </div>
+
+            <div id="scientist-detail-window" class="opacity-0">
+                <div class="content-wrapper">
+                    <div id="scientist-content"
+                        class="p-8 md:p-12 relative z-10 flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. 古代桥梁专著 -->
+        <section id="book" class="mb-16">
+            <h2 class="section-title">古代桥梁专著</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- 《营造法式》 -->
+                <div class="bridge-card p-6">
+                    <!-- 建议替换为这个版本 -->
+                    <div class="h-72 mb-4 overflow-hidden flex items-center justify-center p-2">
+                        <img src="/images/books/yingzaofashi.png" alt="《营造法式》"
+                            class="max-h-full w-auto shadow-md object-contain hover:scale-105 transition-transform">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">《营造法式》</h3>
+                    <p class="text-gray-600 mb-2">北宋·李诫 编修</p>
+                    <p class="text-gray-700 mb-4">中国古代最完整的建筑技术书籍，详细记载了桥梁等建筑的设计、施工、材料等规范，是研究中国古代建筑的重要典籍。</p>
+                    <button class="text-primary font-semibold hover:underline" onclick="showBookDetail('营造法式')">查看详情
+                        →</button>
+                </div>
+                <!-- 《中国桥梁技术史》 -->
+                <div class="bridge-card p-6">
+                    <!-- 建议替换为这个版本 -->
+                    <div class="h-72 mb-4 overflow-hidden flex items-center justify-center p-2">
+                        <img src="/images/books/zhongguoqiaoliangjishushi.jpeg" alt="《中国桥梁技术史》"
+                            class="max-h-full w-auto shadow-md object-contain hover:scale-105 transition-transform">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">《中国桥梁技术史》</h3>
+                    <p class="text-gray-600 mb-2">茅以升 主编</p>
+                    <p class="text-gray-700 mb-4">系统梳理了中国从古代到现代的桥梁发展历程，全面总结了中国桥梁的技术成就与文化内涵，是桥梁领域的权威著作。</p>
+                    <button class="text-primary font-semibold hover:underline" onclick="showBookDetail('中国桥梁技术史')">查看详情
+                        →</button>
+                </div>
+                <!-- 《中国古桥志》 -->
+                <div class="bridge-card p-6">
+                    <!-- 建议替换为这个版本 -->
+                    <div class="h-72 mb-4 overflow-hidden flex items-center justify-center p-2">
+                        <img src="/images/books/zhongguoguqiaozhi.png" alt="《中国古桥志》"
+                            class="max-h-full w-auto shadow-md object-contain hover:scale-105 transition-transform">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">《中国古桥志》</h3>
+                    <p class="text-gray-600 mb-2">中国公路交通史编审委员会 编</p>
+                    <p class="text-gray-700 mb-4">全面收录了中国各地代表性古代桥梁，详细记载了桥梁的历史、结构、艺术价值，是研究中国古桥的重要工具书。</p>
+                    <button class="text-primary font-semibold hover:underline" onclick="showBookDetail('中国古桥志')">查看详情
+                        →</button>
+                </div>
+                <a href="books.html"
+                    class="bridge-card relative min-h-[400px] bg-secondary/5 border-2 border-dashed border-secondary/50 group block overflow-hidden transition-all duration-500">
+
+                    <div
+                        class="absolute inset-0 flex flex-col items-center justify-center transition-all duration-500 opacity-100 group-hover:opacity-0 group-hover:scale-95">
+                        <svg class="w-10 h-10 text-secondary/60 mb-4" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
+                            </path>
+                        </svg>
+                        <p class="text-secondary/80 font-bold tracking-[0.3em] text-lg"
+                            style="writing-mode: vertical-rl;">开启尘封典籍</p>
+                    </div>
+
+                    <div
+                        class="absolute inset-0 flex flex-col items-center justify-center bg-primary text-white p-6 transition-all duration-500 opacity-0 scale-105 group-hover:opacity-100 group-hover:scale-100">
+                        <svg class="w-16 h-16 mb-4 text-secondary animate-pulse" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                            </path>
+                        </svg>
+                        <h3 class="text-2xl font-bold mb-3 text-center">步入文献档案馆</h3>
+                        <p class="text-white/80 text-sm mb-8 text-center leading-relaxed">
+                            解锁《水经注》《天工开物》等更多关于中国古桥的珍贵史料与建筑密码。
+                        </p>
+                        <span
+                            class="inline-flex items-center gap-2 bg-white text-primary px-6 py-2.5 rounded-full font-bold text-sm shadow-xl transform transition-transform group-hover:-translate-y-1">
+                            点击查阅 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </span>
+                    </div>
+                </a>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- 页脚：参考网站与文献 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">参考网站</h3>
+                    <ul class="space-y-2">
+                        <li><a href="https://baike.baidu.com" target="_blank"
+                                class="hover:text-secondary transition-colors">百度百科</a></li>
+                        <li><a href="https://www.sach.gov.cn" target="_blank"
+                                class="hover:text-secondary transition-colors">中国文物网</a></li>
+                        <li><a href="https://www.muqiao.org" target="_blank"
+                                class="hover:text-secondary transition-colors">闽浙木拱桥数据库</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">队伍成员</h3>
+                    <ul class="space-y-2">
+                        <li>杨沫言</li>
+                        <li>陈雯婧</li>
+                        <li>沈皖星</li>
+                        <li>郑雯月</li>
+                        <li>廖泽宇</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center border-t border-gray-700 pt-8">
+                <p>&copy; 2025 NWAFU×计算机设计大赛 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 交互弹窗：桥梁详情 -->
+    <!-- 1. 背景层：增加 transition 过渡效果和背景模糊 -->
+    <div id="bridgeModal"
+        class="fixed inset-0 z-[1000] bg-black/60 backdrop-blur-none transition-all duration-500 ease-out hidden flex items-center justify-center p-4">
+
+        <!-- 2. 内容盒子：增加初始缩放 scale-95 和透明度 opacity-0 -->
+        <div id="bridgeModalContent"
+            class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform scale-95 opacity-0 transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1)">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="modalTitle" class="text-3xl font-bold text-dark border-l-4 border-primary pl-4"></h3>
+                    <button onclick="closeModal('bridgeModal')"
+                        class="text-gray-400 hover:text-primary transition-colors text-4xl">&times;</button>
+                </div>
+                <div id="modalContent" class="space-y-6">
+                    <!-- 动态填充内容 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 交互弹窗：结构详情 -->
+    <div id="structureModal" class="fixed inset-0 z-[1000] bg-black/80 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="structureModalTitle" class="text-3xl font-bold text-dark"></h3>
+                    <button onclick="closeModal('structureModal')"
+                        class="text-gray-500 hover:text-dark text-3xl">&times;</button>
+                </div>
+                <div id="structureModalContent" class="space-y-6">
+                    <!-- 动态加载内容 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 移动端菜单切换
+        document.getElementById('menuBtn').addEventListener('click', function () {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        });
+
+        // 弹窗控制
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            const content = modal.querySelector('div'); // 找到内容盒子
+
+            // 1. 显示容器
+            modal.classList.remove('hidden');
+
+            // 2. 强制浏览器重绘 (Trick)，然后激活状态
+            setTimeout(() => {
+                modal.classList.add('backdrop-blur-md'); // 增加背景模糊
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            const content = modal.querySelector('div');
+
+            // 1. 触发退场动画
+            modal.classList.remove('backdrop-blur-md');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+
+            // 2. 动画结束后隐藏 DOM
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 500); // 对应 duration-500
+
+            document.body.style.overflow = 'auto';
+        }
+        const scientistData = {
+            lichun: {
+                name: "李春",
+                period: "隋朝 (约公元590-608年)",
+                title: "赵州桥的设计者与建造者",
+                desc: "李春是世界上最早的敞肩石拱桥——赵州桥的设计者。他在人类建筑史上首创了‘敞肩拱’结构，将主拱圈两肩原有的实心改为四个小拱，既节省了石料、减轻了自重，又极大地增强了泄洪能力，是世界土木工程史上的奇迹。",
+                achievement: ["首创敞肩石拱设计", "主持修建安济桥", "对坦弧拱圈的精准计算"]
+            },
+            caixiang: {
+                name: "蔡襄",
+                period: "北宋 (1012年-1067年)",
+                title: "跨海大桥建造的主持者",
+                desc: "北宋著名政治家、书法家。在任泉州太守期间，主持修建了洛阳桥。面对湍急的海潮，他创造性地采用了‘筏型基础’和‘种蛎固基’，是中国历史上第一位将生物学应用于大规模工程建设的先行者。",
+                achievement: ["主持修建万安桥", "首创‘种蛎固基’法", "开创筏型基础先河"]
+            },
+            maoyisheng: {
+                name: "茅以升",
+                period: "现代 (1896年-1989年)",
+                title: "钱塘江大桥之父",
+                desc: "中国现代桥梁工程奠基人。他主持修建了中国第一座由中国人自己设计、建造的铁路公路两用大桥——钱塘江大桥，打破了‘钱塘江造桥是不可能的事’的断言，并在抗日战争期间亲手炸桥以阻敌。",
+                achievement: ["主持修建钱塘江大桥", "武汉长江大桥技术顾问", "撰写《中国古桥技术史》"]
+            }
+        };
+
+        function showScientist(id, element) {
+            // 1. 处理头像选中样式
+            document.querySelectorAll('.scientist-avatar').forEach(av => av.classList.remove('active-avatar'));
+            element.querySelector('.scientist-avatar').classList.add('active-avatar');
+
+            // 2. 获取数据并填充
+            const data = scientistData[id];
+            const contentBox = document.getElementById('scientist-content');
+            const windowBox = document.getElementById('scientist-detail-window');
+
+            // 3. 核心修改：如果是第一次展示，移除透明度为0的类
+            windowBox.classList.remove('opacity-0');
+
+            // 4. 触发切换动画（先淡出再淡入）
+            contentBox.style.opacity = '0';
+            contentBox.style.transform = 'translateY(10px)';
+            contentBox.style.transition = 'all 0.3s';
+
+            setTimeout(() => {
+                contentBox.innerHTML = `
+            <div class="md:w-1/3">
+                <div class="text-primary font-bold text-sm mb-2 uppercase tracking-widest">${data.period}</div>
+                <h4 class="text-4xl font-bold text-dark mb-4">${data.name}</h4>
+                <div class="inline-block px-4 py-1 bg-secondary/20 text-primary rounded-full text-sm font-bold mb-6">${data.title}</div>
+            </div>
+            <div class="md:w-2/3 border-t md:border-t-0 md:border-l border-secondary/20 pt-8 md:pt-0 md:pl-8 text-left">
+                <p class="text-gray-600 leading-relaxed mb-6 text-lg">${data.desc}</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    ${data.achievement.map(item => `
+                        <div class="bg-[#FDFBF7] border border-secondary/10 p-3 rounded-lg text-xs font-bold text-primary flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 bg-primary rounded-full"></span> ${item}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+                contentBox.style.opacity = '1';
+                contentBox.style.transform = 'translateY(0)';
+            }, 300);
+        }
+
+        // 页面加载完成后立即显示第一个人物，防止空白
+        window.addEventListener('DOMContentLoaded', () => {
+            // 默认点击第一个头像容器
+            const firstScientist = document.querySelector('#scientists .group');
+            if (firstScientist) {
+                showScientist('lichun', firstScientist);
+            }
+        });
+
+        // 初始化加载第一个人物
+        window.addEventListener('load', () => {
+            showScientist('lichun', document.querySelector('.group'));
+        });
+        // 模拟数据：各朝代桥梁统计
+        const dynastyData = {
+            labels: ['隋', '唐', '宋', '元', '明', '清'],
+            values: [12, 35, 89, 42, 156, 218],
+            bridges: {
+                '隋': [
+                    {
+                        name: '赵州桥（安济桥）',
+                        dynasty: '隋大业年间（公元605—618年）',
+                        size: '全长50.82米，主拱净跨径37.02米，桥高7.23米，两端宽9.6米',
+                        material: '全部采用青灰色砂石砌筑',
+                        feature: '核心创举在于“敞肩拱”设计。在大拱两肩各开两个小拱，节省石料180立方米，减重15%；增加泄洪通道，降低水流冲击力。',
+                        achievement: '大拱由28道独立拱券并列砌筑。领先西方同类技术约1200年。',
+                        culture: '隋代浮雕艺术瑰宝；民间传说鲁班造桥、张果老蹄印；民歌《小放牛》；入选小学语文教材。'
+                    }
+                ],
+                '宋': [
+                    {
+                        name: '洛阳桥（万安桥）',
+                        dynasty: '北宋皇祐五年（1053年）',
+                        size: '全长约731米，桥面宽4.5米，设船形桥墩45座',
+                        material: '灰绿岩（花岗岩）砌筑，桥面由300余条巨型石梁铺就',
+                        feature: '三大创举：“筏形基础”克服软弱地基；“种蛎固基”利用生物学原理固桥（世界首创）；“浮运架梁”利用潮汐涨落架桥。',
+                        achievement: '中国现存最早跨海梁式石桥。2021年列入《世界遗产名录》。',
+                        culture: '“地随人走”的命名体现家国情怀；蔡襄撰书《万安桥记》碑刻世称“三绝”。'
+                    },
+                    {
+                        name: '广济桥（湘子桥）',
+                        dynasty: '南宋乾道七年（1171年）',
+                        size: '全长518米，桥面宽约5米',
+                        material: '石砌桥墩与石梁，中段以18只木船连为浮桥',
+                        feature: '“十八梭船廿四洲”。世界最早启闭式桥梁，集梁桥、拱桥、浮桥于一体。日间连桥通行，夜间启闭通航。',
+                        achievement: '单根石梁重达50-60吨。被茅以升誉为“世界上最早的启闭式桥梁”。',
+                        culture: '“一里长桥一里市”的商业景观；桥亭陈列潮州非遗（潮绣、木雕等）。'
+                    },
+                    {
+                        name: '卢沟桥',
+                        dynasty: '金大定二十九年（1189年）',
+                        size: '全长266.5米，桥面宽9.3米，11孔不等跨圆拱',
+                        material: '石英砂岩及大理石砌筑，铺设花岗岩条石',
+                        feature: '分水尖嵌入铁柱“斩龙剑”，用于击碎春融冰块。拱券采用纵联式砌筑法，整体性极强。',
+                        achievement: '华北现存最古老大型联拱石桥。桥墩迎水面设计极具工程科学性。',
+                        culture: '石狮子“数不清”（共约489只）；乾隆题字“卢沟晓月”；“卢沟桥事变”发生地，民族精神象征。'
+                    }
+                ],
+                // 在 dynastyData.bridges 中补充
+                '唐': [
+                    {
+                        name: '广济桥（湘子桥）',
+                        dynasty: '唐代始建',
+                        size: '全长约518米',
+                        material: '石墩、木梁、浮船',
+                        feature: '世界上最早的启闭式桥梁，集梁桥、拱桥、浮桥于一体',
+                        achievement: '“十八梭船廿四洲”，展示了极高的功能适应性',
+                        culture: '潮汕地区的文化地标，体现了独特的民俗与商业繁荣'
+                    }
+                ],
+                '元': [
+                    {
+                        name: '安平桥（五里桥）',
+                        dynasty: '南宋至元代',
+                        size: '全长约2255米（五里）',
+                        material: '花岗岩石材',
+                        feature: '中国古代最长的海港大石桥，采用“睡木沉基”法',
+                        achievement: '“天下无桥长此桥”，中古时代世界最长桥梁',
+                        culture: '海上丝绸之路的重要遗迹，展现了宋元时期的海外贸易盛况'
+                    }
+                ],
+                '明': [
+                    {
+                        name: '宝带桥',
+                        dynasty: '明代重修',
+                        size: '全长317米，53孔连拱',
+                        material: '石砌结构',
+                        feature: '多孔长联拱石桥，桥面平坦，利于纤夫拉纤',
+                        achievement: '中国现存孔数最多的连拱石桥',
+                        culture: '江南水乡桥梁建筑的杰作，极具韵律美'
+                    }
+                ],
+                '清': [
+                    {
+                        name: '十七孔桥',
+                        dynasty: '清代',
+                        size: '长150米，宽8米',
+                        material: '石砌',
+                        feature: '仿卢沟桥造型，连接昆明湖东堤与南湖岛',
+                        achievement: '皇家园林桥梁艺术的巅峰，将实用与景观完美结合',
+                        culture: '体现了清代皇家园林的造园思想与审美情趣'
+                    }
+                ]
+                // 其他朝代可补充
+            }
+        };
+
+        // 初始化朝代统计图表
+        // ================= 开始替换：朝代统计图表优化 =================
+        // 重新初始化朝代统计图表
+        const dynastyChart = echarts.init(document.getElementById('dynastyChart'));
+
+        const option = {
+            grid: {
+                top: '10%',
+                left: '3%',
+                right: '4%',
+                bottom: '5%',
+                containLabel: true
+            },
+            tooltip: {
+                trigger: 'axis',
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                borderRadius: 8,
+                borderWidth: 0,
+                shadowColor: 'rgba(0,0,0,0.2)',
+                shadowBlur: 10,
+                formatter: function (params) {
+                    return `<div style="padding: 5px;">
+                        <b style="color: #8B4513; font-size: 16px;">${params[0].name}代</b><br/>
+                        <span style="color: #666;">遗存古桥：</span>
+                        <span style="font-size: 18px; font-weight: bold; color: #2C1810;">${params[0].value}</span> 座
+                    </div>`;
+                }
+            },
+            xAxis: {
+                type: 'category',
+                data: dynastyData.labels,
+                axisLine: { lineStyle: { color: '#D2B48C' } },
+                axisLabel: {
+                    fontSize: 14,
+                    fontWeight: 'bold',
+                    color: '#8B4513',
+                    margin: 15
+                },
+                axisTick: { show: false }
+            },
+            yAxis: {
+                type: 'value',
+                splitLine: { lineStyle: { type: 'dashed', color: '#E5E5E5' } },
+                axisLine: { show: false },
+                axisLabel: { color: '#999' }
+            },
+            animationDuration: 2000,
+            animationEasing: 'cubicOut',
+            series: [{
+                name: '桥梁数量',
+                type: 'bar',
+                barWidth: '40%',
+                itemStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: '#A0522D' },
+                        { offset: 0.7, color: '#D2B48C' },
+                        { offset: 1, color: '#F5F5DC' }
+                    ]),
+                    borderRadius: [50, 50, 0, 0],
+                    shadowBlur: 10,
+                    shadowColor: 'rgba(139, 69, 19, 0.2)',
+                    shadowOffsetY: 5
+                },
+                emphasis: {
+                    itemStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: '#8B4513' },
+                            { offset: 1, color: '#D2B48C' }
+                        ]),
+                        shadowBlur: 20,
+                        shadowColor: 'rgba(139, 69, 19, 0.4)'
+                    }
+                },
+                data: dynastyData.values,
+                showBackground: true,
+                backgroundStyle: {
+                    color: 'rgba(210, 180, 140, 0.05)',
+                    borderRadius: [50, 50, 0, 0]
+                }
+            }]
+        };
+
+        dynastyChart.setOption(option);
+
+        // 优化后的点击事件：带过渡动画
+        dynastyChart.on('click', function (params) {
+            const container = document.getElementById('dynastyBridges');
+
+            // 1. 先让容器变透明，准备切换内容
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            container.style.transition = 'all 0.5s ease';
+
+            setTimeout(() => {
+                const dynasty = params.name;
+                const bridges = dynastyData.bridges[dynasty] || [];
+                container.innerHTML = '';
+
+                if (bridges.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-12 border-2 border-dashed border-secondary/30 rounded-xl">
+                            <p class="text-gray-400">《${dynasty}代桥梁志》正在整理中...</p>
+                        </div>`;
+                } else {
+                    bridges.forEach((bridge, index) => {
+                        const card = document.createElement('div');
+                        card.style.animationDelay = `${index * 0.1}s`;
+                        card.className = 'bridge-card p-6 animate-fadeInUp';
+                        card.innerHTML = `
+                            <div class="relative h-48 bg-gray-100 rounded-lg mb-4 overflow-hidden group">
+                                <img src="https://via.placeholder.com/800x400?text=${bridge.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                <div class="absolute top-2 right-2 bg-primary/90 text-white text-xs px-2 py-1 rounded shadow-md">
+                                    ${bridge.material}
+                                </div>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-1 text-dark">${bridge.name}</h3>
+                            <div class="w-10 h-1 bg-primary mb-4"></div>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">${bridge.feature}</p>
+                            <button class="w-full border border-primary text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-lg transition-all" 
+                                    onclick="showBridgeDetail('${bridge.name}')">
+                                研读详情
+                            </button>
+                        `;
+                        container.appendChild(card);
+                    });
+                }
+
+                // 2. 恢复可见并滑入
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 300);
+        });
+        // ================= 结束替换 =================
+
+        // 图表点击事件：显示对应朝代代表桥梁
+        dynastyChart.on('click', function (params) {
+            const container = document.getElementById('dynastyBridges');
+
+            // 1. 先让容器变透明，准备切换内容
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            container.style.transition = 'all 0.5s ease';
+
+            setTimeout(() => {
+                const dynasty = params.name;
+                const bridges = dynastyData.bridges[dynasty] || [];
+                container.innerHTML = '';
+
+                if (bridges.length === 0) {
+                    container.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <p class="text-gray-400">《${dynasty}代桥梁志》正在整理中...</p>
+                </div>`;
+                } else {
+                    bridges.forEach((bridge, index) => {
+                        const card = document.createElement('div');
+                        // 增加逐个浮现的动画延迟
+                        card.style.animationDelay = `${index * 0.1}s`;
+                        card.className = 'bridge-card p-6 animate-fadeInUp';
+                        card.innerHTML = `
+                    <div class="relative h-48 bg-gray-100 rounded-lg mb-4 overflow-hidden group">
+                        <img src="https://via.placeholder.com/800x400?text=${bridge.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute top-2 right-2 bg-primary/90 text-white text-xs px-2 py-1 rounded shadow-md">
+                            ${bridge.material}
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-1 text-dark">${bridge.name}</h3>
+                    <div class="w-10 h-1 bg-primary mb-4"></div>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-2">${bridge.feature}</p>
+                    <button class="w-full border border-primary text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-lg transition-all" 
+                            onclick="showBridgeDetail('${bridge.name}')">
+                        研读详情
+                    </button>
+                `;
+                        container.appendChild(card);
+                    });
+                }
+
+                // 2. 恢复可见并滑入
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 300);
+        });
+
+        // 初始化中国地图
+        const bridgeMap = echarts.init(document.getElementById('bridgeMap'));
+        // 模拟省份桥梁数据
+        // ================= 新增：各省代表性古桥详细数据档案 =================
+        const provinceBridgesData = {
+            '北京': [
+                { name: '卢沟桥', type: '石拱桥', dynasty: '金代', desc: '华北最古老的十一孔联拱石桥，柱头雕刻有形态各异的石狮。' },
+                { name: '十七孔桥', type: '石拱桥', dynasty: '清代', desc: '颐和园核心景观，将皇家园林的宏大与桥梁的实用完美结合。' }
+            ],
+            '河北': [
+                { name: '赵州桥', type: '石拱桥', dynasty: '隋代', desc: '世界现存最早、保存最完整的单孔敞肩石拱桥，李春设计。' },
+                { name: '弘济桥', type: '石拱桥', dynasty: '金代', desc: '形制与赵州桥极其相似，被称为赵州桥的“姊妹桥”。' }
+            ],
+            '山西': [
+                { name: '晋祠飞梁', type: '梁桥', dynasty: '宋代', desc: '中国罕见的十字形古桥，被梁思成誉为“中国古建筑中的孤例”。' }
+            ],
+            '江苏': [
+                { name: '宝带桥', type: '连拱石桥', dynasty: '唐代始建/明代重修', desc: '中国现存孔数最多的连拱石桥，共53孔，犹如长带卧波。' },
+                { name: '五亭桥', type: '亭桥', dynasty: '清代', desc: '扬州瘦西湖的标志，桥上建有五座风亭，极具南方园林特色。' }
+            ],
+            '浙江': [
+                { name: '八字桥', type: '石梁桥', dynasty: '南宋', desc: '中国最早的“立交桥”，巧妙解决复杂水系的交通问题。' },
+                { name: '泰顺廊桥群', type: '木拱廊桥', dynasty: '明清', desc: '采用类似《清明上河图》中虹桥的编木拱结构，不用一根铁钉。' }
+            ],
+            '福建': [
+                { name: '洛阳桥', type: '石梁桥', dynasty: '北宋', desc: '中国第一座跨海石桥，首创“筏型基础”和“种蛎固基”法。' },
+                { name: '安平桥', type: '石梁桥', dynasty: '南宋', desc: '享有“天下无桥长此桥”美誉，是中国现存最长的跨海梁式石桥。' }
+            ],
+            '广东': [
+                { name: '广济桥（湘子桥）', type: '浮梁拱结合', dynasty: '南宋', desc: '世界最早的启闭式桥梁，“十八梭船廿四洲”是其最大特色。' }
+            ],
+            '四川': [
+                { name: '安澜索桥', type: '竹索桥', dynasty: '宋代/清代', desc: '都江堰水利工程的重要组成部分，中国古代著名的五大桥梁之一。' },
+                { name: '泸定桥', type: '铁索桥', dynasty: '清代', desc: '大渡河上的重要通道，全长103米，由13根铁链组成。' }
+            ],
+            '云南': [
+                { name: '双龙桥（十七孔桥）', type: '石拱桥', dynasty: '清代', desc: '建水古城外的名桥，三阁十七孔，造型优美，规模宏大。' }
+            ],
+            '广西': [
+                { name: '程阳风雨桥', type: '木石风雨桥', dynasty: '民国初年', desc: '侗族建筑艺术的结晶，集桥、廊、亭三者于一身。' }
+            ],
+            '甘肃': [
+                { name: '渭源灞陵桥', type: '木拱桥', dynasty: '明代/民国重修', desc: '全国独一无二的纯木结构卧桥，被称为“千里渭河第一桥”。' }
+            ],
+            '江西': [
+                { name: '清华彩虹桥', type: '廊桥', dynasty: '南宋', desc: '徽州地区现存最古老、最长的廊桥，桥墩呈半船形以分解水流。' }
+            ]
+        };
+
+        // 根据真实数据生成地图省份分布值
+        const provinceData = Object.keys(provinceBridgesData).map(prov => ({
+            name: prov,
+            value: provinceBridgesData[prov].length * 15 + Math.floor(Math.random() * 20)
+        }));
+        // ================= 替换结束 =================
+
+        bridgeMap.setOption({
+            // 移除原有title，因为HTML中已经有更好看的标题了
+            backgroundColor: 'transparent',
+
+            // 定制化、古风的 Tooltip
+            tooltip: {
+                trigger: 'item',
+                backgroundColor: 'rgba(44, 24, 16, 0.85)', // 深棕色半透明背景 (theme dark)
+                borderColor: '#D2B48C', // 辅助色边框
+                borderWidth: 1,
+                padding: [10, 15],
+                textStyle: {
+                    color: '#F5F5DC', // 米黄色文字
+                    fontFamily: '"Noto Serif SC", serif'
+                },
+                formatter: function (params) {
+                    if (params.value) {
+                        return `
+                    <div class="text-center">
+                        <div style="font-size: 18px; color: #D2B48C; font-weight: bold; border-bottom: 1px solid #D2B48C; padding-bottom: 4px; margin-bottom: 4px;">
+                            ${params.name}
+                        </div>
+                        <div>记录遗存：<span style="font-size: 20px; color: #fff; font-weight: bold;">${params.value}</span> 座</div>
+                    </div>
+                `;
+                    } else {
+                        return `${params.name}<br/><span style="color:#aaa;">暂无详细数据</span>`;
+                    }
+                }
+            },
+
+            // 视觉映射组件 (图例)
+            visualMap: {
+                min: 0,
+                max: 70,
+                left: '3%',
+                bottom: '5%',
+                text: ['星罗棋布 (多)', '凤毛麟角 (少)'], // 古风文案
+                textStyle: {
+                    color: '#8B4513', // 古铜色
+                    fontFamily: '"Noto Serif SC", serif',
+                    fontWeight: 'bold'
+                },
+                calculable: true,
+                // 色彩过渡：从浅米色 -> 暖木色 -> 深红棕色，符合古代文物气质
+                inRange: {
+                    color: ['#F5E6D3', '#E6C287', '#C88B3A', '#A0522D', '#703010']
+                }
+            },
+
+            series: [{
+                name: '桥梁数量',
+                type: 'map',
+                map: 'china',
+                roam: true, // 开启鼠标缩放和平移
+                scaleLimit: {
+                    min: 1, // 最小缩放比例
+                    max: 3  // 最大缩放比例
+                },
+                // 地图区块的基础样式设计
+                itemStyle: {
+                    normal: {
+                        areaColor: '#FAF0E6', // 无数据省份的底色
+                        borderColor: '#D2B48C', // 浅木色边界线
+                        borderWidth: 1
+                    },
+                    // 鼠标悬停时的样式：增加发光阴影，改变颜色
+                    emphasis: {
+                        areaColor: '#8B4513', // 高亮成主题色
+                        borderColor: '#fff',
+                        borderWidth: 1,
+                        shadowOffsetX: 0,
+                        shadowOffsetY: 2,
+                        shadowBlur: 10,
+                        shadowColor: 'rgba(0, 0, 0, 0.4)'
+                    }
+                },
+                // 省份名称标签
+                label: {
+                    normal: {
+                        show: false, // 默认不显示文字，保持地图干净
+                        textStyle: { color: '#666' }
+                    },
+                    emphasis: {
+                        show: true, // 悬停时显示文字
+                        textStyle: {
+                            color: '#FFF',
+                            fontWeight: 'bold',
+                            fontSize: 14,
+                            textShadowColor: 'rgba(0,0,0,0.8)',
+                            textShadowBlur: 3
+                        }
+                    }
+                },
+                data: provinceData
+            }]
+        });
+
+        // 地图点击事件：显示省份桥梁
+        // ================= 优化地图点击事件 =================
+        bridgeMap.on('click', function (params) {
+            const province = params.name;
+            const bridges = provinceBridgesData[province];
+
+            // 自动平滑滚动到展示区
+            document.getElementById('dynasty').scrollIntoView({ behavior: 'smooth' });
+
+            const container = document.getElementById('dynastyBridges');
+
+            // 过渡动画
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            container.style.transition = 'all 0.4s ease';
+
+            setTimeout(() => {
+                container.innerHTML = ''; // 清空原有内容
+
+                if (!bridges || bridges.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full p-6 bg-secondary/10 border-l-4 border-primary rounded-r-lg">
+                            <h3 class="text-xl font-bold text-dark mb-2">地理寻踪：${province}</h3>
+                            <p class="text-gray-600">该地区的古桥梁档案正在进一步考证与录入中，敬请期待...</p>
+                        </div>
+                    `;
+                } else {
+                    // 添加省份标题横幅
+                    const titleBanner = document.createElement('div');
+                    titleBanner.className = 'col-span-full mb-4 pb-2 border-b-2 border-primary/20 flex items-center justify-between';
+                    titleBanner.innerHTML = `
+                        <h3 class="text-2xl font-bold text-primary flex items-center gap-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            ${province} 古桥巡礼
+                        </h3>
+                        <span class="text-sm text-gray-500">共收录 ${bridges.length} 座经典桥梁</span>
+                    `;
+                    container.appendChild(titleBanner);
+
+                    // 遍历生成该省份的桥梁卡片
+                    bridges.forEach((bridge, index) => {
+                        const card = document.createElement('div');
+                        card.className = 'bridge-card p-6 border-t-4 border-primary bg-white shadow-md rounded-lg';
+                        // 使用你之前配置的 fadeInUp 动画
+                        card.style.animation = `fadeInUp 0.6s ease-out ${index * 0.15}s forwards`;
+                        card.style.opacity = '0';
+
+                        card.innerHTML = `
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="text-2xl font-bold text-dark">${bridge.name}</h4>
+                                <span class="bg-secondary/20 text-primary text-xs px-2 py-1 rounded-full font-bold border border-secondary/50">
+                                    ${bridge.dynasty}
+                                </span>
+                            </div>
+                            <div class="text-sm text-primary/80 mb-3 flex items-center gap-1 font-semibold">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                桥梁结构：${bridge.type}
+                            </div>
+                            <p class="text-gray-700 leading-relaxed text-sm">${bridge.desc}</p>
+                        `;
+                        container.appendChild(card);
+                    });
+                }
+
+                // 恢复可见并滑入
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 400);
+        });
+        // ================= 替换结束 =================
+
+        // 显示桥梁详情弹窗
+        // 显示桥梁详情弹窗
+        function showBridgeDetail(bridgeName) {
+            // 1. 建立名桥名称与图片文件名的映射表
+            const nameToPinyin = {
+                '赵州桥（安济桥）': 'zhaozhou',
+                '洛阳桥（万安桥）': 'luoyang',
+                '广济桥（湘子桥）': 'guangji',
+                '卢沟桥': 'lugou'
+            };
+
+            // 2. 查找对应桥梁数据
+            let bridge = null;
+            for (const dynasty in dynastyData.bridges) {
+                const found = dynastyData.bridges[dynasty].find(b => b.name === bridgeName);
+                if (found) {
+                    bridge = found;
+                    break;
+                }
+            }
+
+            if (!bridge) return;
+
+            // 3. 确定图片路径：如果是四大名桥则使用本地路径，否则使用占位图
+            const pinyin = nameToPinyin[bridgeName];
+            const imageSrc = pinyin
+                ? `images/famous_bridges/${pinyin}_2.png`
+                : `https://via.placeholder.com/1200x600?text=${bridge.name}`;
+
+            // 4. 填充弹窗内容
+            document.getElementById('modalTitle').textContent = bridge.name;
+            document.getElementById('modalContent').innerHTML = `
+        <div class="h-80 bg-gray-200 rounded-lg overflow-hidden mb-6 shadow-inner border border-secondary/20">
+            <img src="${imageSrc}" alt="${bridge.name}" class="w-full h-full object-cover">
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-secondary/10 p-6 rounded-xl border border-secondary/30">
+            <div>
+                <h4 class="font-bold text-primary mb-2 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V7h2v2z"></path></svg>
+                    基本信息
+                </h4>
+                <p class="text-sm"><strong>建造年代：</strong>${bridge.dynasty}</p>
+                <p class="text-sm mt-1"><strong>尺寸规模：</strong>${bridge.size}</p>
+                <p class="text-sm mt-1"><strong>建筑材料：</strong>${bridge.material}</p>
+            </div>
+            <div>
+                <h4 class="font-bold text-primary mb-2 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM4 8a2 2 0 11-4 0 2 2 0 014 0zM10 12a5 5 0 00-5 5v2h10v-2a5 5 0 00-5-5z"></path></svg>
+                    技术地位
+                </h4>
+                <p class="text-sm text-gray-700">${bridge.achievement}</p>
+            </div>
+        </div>
+        <div class="space-y-4">
+            <h4 class="text-xl font-bold text-dark border-b pb-2">设计特点与技术创举</h4>
+            <p class="text-gray-700 leading-relaxed">${bridge.feature}</p>
+        </div>
+        <div class="space-y-4">
+            <h4 class="text-xl font-bold text-dark border-b pb-2">人文景观与文化内涵</h4>
+            <p class="text-gray-700 leading-relaxed">${bridge.culture}</p>
+        </div>
+    `;
+            openModal('bridgeModal');
+        }
+
+        // 其他弹窗函数（科学家、专著）可按相同逻辑扩展
+        function showScientistDetail(name) {
+            const scientistData = {
+                '李春': {
+                    title: '隋代大匠',
+                    bio: '隋代著名造桥工匠，生平事迹见于《赵州桥石栏板》记载。',
+                    contribution: '他总结了前人的经验，首创“敞肩拱”方案。通过在主拱圈上加设四个小拱，既减轻了桥身自重，又增加了泄洪量，这种设计领先世界1200多年。',
+                    works: '赵州桥（安济桥）'
+                },
+                '茅以升': {
+                    title: '现代桥梁之父',
+                    bio: '1896-1989，江苏镇江人，著名桥梁专家、教育家。',
+                    contribution: '主持修建了钱塘江大桥，这是中国自行设计、建造的第一座双层公路铁路两用大桥。他在桥梁力学、科研教育领域做出了开创性贡献。',
+                    works: '钱塘江大桥、武汉长江大桥（技术顾问）、《中国桥梁技术史》'
+                }
+            };
+
+            const data = scientistData[name];
+            if (!data) return;
+
+            document.getElementById('modalTitle').textContent = name + ' - ' + data.title;
+            document.getElementById('modalContent').innerHTML = `
+        <div class="bg-secondary/20 p-4 rounded-lg">
+            <h4 class="font-bold text-primary">人物简介</h4>
+            <p class="text-gray-700">${data.bio}</p>
+        </div>
+        <div>
+            <h4 class="font-bold text-primary">主要成就与贡献</h4>
+            <p class="text-gray-700">${data.contribution}</p>
+        </div>
+        <div>
+            <h4 class="font-bold text-primary">代表作品</h4>
+            <p class="text-gray-700">${data.works}</p>
+        </div>
+    `;
+            openModal('bridgeModal'); // 复用桥梁详情的弹窗 ID
+        }
+
+        function showBookDetail(name) {
+            const bookData = {
+                '营造法式': {
+                    author: '李诫 (北宋)',
+                    desc: '刊行于1103年，是当时建筑设计与施工的百科全书。',
+                    content: '书中规定了“材”的模数制度，对桥梁的石作、木作工艺有极其严谨的规范，确保了古代工程的标准化与质量。',
+                    value: '中国古代建筑学的里程碑。'
+                },
+                '中国桥梁技术史': {
+                    author: '茅以升 主编',
+                    desc: '现代系统研究中国桥梁发展的开山之作。',
+                    content: '从原始桥梁到现代钢筋混凝土大桥，全景式记录了中国造桥技术的演进，包含大量实地考察数据。',
+                    value: '桥梁学科的必读书目。'
+                },
+                '中国古桥志': {
+                    author: '中国公路交通史编审委员会 编',
+                    desc: '这是一部全面记载中国各省、自治区、直辖市现存及重要历史古桥的大型工具书。',
+                    content: '书中对全国范围内的古桥进行了系统普查与分类，详细记录了每座桥梁的地理位置、历史沿革、结构尺寸、碑刻文献及艺术特色，包含了大量珍贵的实地测绘数据与影像资料。',
+                    value: '是目前国内收录古桥数量最全、资料最翔实的断代工程专著，为古桥的保护、修复及桥梁史研究提供了极其重要的原始凭证。'
+                }
+            };
+
+            const data = bookData[name] || { author: '未知', desc: '暂无详细介绍', content: '', value: '' };
+
+            document.getElementById('modalTitle').textContent = `《${name}》`;
+            document.getElementById('modalContent').innerHTML = `
+        <p><strong>作者/编著：</strong>${data.author}</p>
+        <p><strong>简要介绍：</strong>${data.desc}</p>
+        <div class="mt-4">
+            <h4 class="font-bold">核心价值：</h4>
+            <p>${data.content}</p>
+            <p class="italic text-gray-600 mt-2">${data.value}</p>
+        </div>
+    `;
+            openModal('bridgeModal');
+        }
+
+        // 窗口大小变化时重置图表
+        window.addEventListener('resize', function () {
+            dynastyChart.resize();
+            bridgeMap.resize();
+        });
+
+        // 页面加载完成后自动触发隋代数据展示
+        window.addEventListener('load', function () {
+            dynastyChart.dispatchAction({
+                type: 'highlight',
+                seriesIndex: 0,
+                dataIndex: 0
+            });
+            // 模拟点击隋代
+            dynastyChart.on('click', { seriesIndex: 0, dataIndex: 0 }, function () { });
+            document.getElementById('dynastyBridges').innerHTML = `
+                <div class="bridge-card p-6">
+                    <div class="h-48 bg-gray-200 rounded-lg mb-4 overflow-hidden">
+                        <img src="https://via.placeholder.com/800x400?text=赵州桥（安济桥）" alt="赵州桥" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">赵州桥（安济桥）</h3>
+                    <p class="text-gray-600 mb-4">隋代代表性桥梁</p>
+                    <button class="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-lg transition-colors" onclick="showBridgeDetail('赵州桥（安济桥）')">查看详情</button>
+                </div>
+            `;
+        });
+    </script>
+</body>
+
+</html>
