@@ -117,7 +117,14 @@
         grid-template-rows: 1fr; 
         transition: grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
     }
-
+    /* 新增：隐藏右侧分栏的滚动条但保持可滚动 */
+        .hide-scrollbar {
+            scrollbar-width: none; 
+            -ms-overflow-style: none; 
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
     /* 当内容改变时触发的内部容器动画 */
     .content-wrapper {
         @apply overflow-hidden;
@@ -284,28 +291,56 @@ section {
 
     <main class="container mx-auto px-4 py-12">
         <!-- 1. 中国地图古代桥梁分布图 -->
-        <section id="map" class="mb-16">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-3xl font-bold text-dark border-l-4 border-primary pl-4">中国古代桥梁分布地图</h2>
-                <span class="hidden md:inline-block text-sm text-primary/80 bg-secondary/20 px-3 py-1 rounded-full">
-                    💡 支持鼠标滚轮缩放与拖拽
+       <section id="map" class="mb-16">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+                <h2 class="text-3xl font-bold text-dark border-l-4 border-primary pl-4">地理寻踪：中国古桥分布与地域风格</h2>
+                <span class="mt-2 md:mt-0 text-sm text-primary/80 bg-secondary/20 px-3 py-1 rounded-full inline-block">
+                    💡 提示：点击地图上的省份区域，右侧面板将展示该地名桥
                 </span>
             </div>
 
-            <div class="p-2 bg-secondary/30 rounded-xl shadow-2xl border border-secondary/50">
-                <div class="p-1 bg-[#FAF8F5] rounded-lg border-2 border-dashed border-secondary">
-                    <div id="bridgeMap" class="w-full h-[600px] rounded-lg"></div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <div class="lg:col-span-7 xl:col-span-8">
+                    <div class="p-2 bg-secondary/30 rounded-xl shadow-2xl border border-secondary/50 h-full">
+                        <div class="p-1 bg-[#FAF8F5] rounded-lg border-2 border-dashed border-secondary h-full relative">
+                            <div id="bridgeMap" class="w-full h-[500px] md:h-[600px] rounded-lg"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 xl:col-span-4 h-[500px] md:h-[635px]">
+                    <div class="bg-white rounded-xl shadow-2xl border border-secondary/30 p-6 h-full flex flex-col relative overflow-hidden">
+                        
+                        <div id="defaultRegionInfo" class="h-full flex flex-col transition-all duration-500">
+                            <h3 class="text-2xl font-bold text-dark mb-4 border-b-2 border-primary/20 pb-3 flex items-center gap-2">
+                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                营建智慧与地域风貌
+                            </h3>
+                            <p class="text-gray-600 mb-6 text-sm leading-relaxed">中国幅员辽阔，多样的自然地理环境孕育了各具特色的桥梁建筑风格。古人“因地制宜、就地取材”，展现了令人叹为观止的工程智慧。</p>
+                            
+                            <div class="space-y-4 flex-1 hide-scrollbar overflow-y-auto pr-2">
+                                <div class="bg-secondary/10 p-4 rounded-lg border-l-4 border-primary hover:-translate-y-1 transition-transform">
+                                    <h4 class="font-bold text-primary mb-2 flex items-center gap-2">🏞️ 北方：厚重沉稳，抵御洪汛</h4>
+                                    <p class="text-sm text-gray-700 leading-relaxed">北方河流多平缓宽阔，且常有夏汛与冬冰。桥梁多采用坚固的<span class="font-bold text-dark">厚墩石拱桥</span>（如赵州桥、卢沟桥），注重结构强度与泄洪防冰能力。</p>
+                                </div>
+                                <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400 hover:-translate-y-1 transition-transform">
+                                    <h4 class="font-bold text-blue-700 mb-2 flex items-center gap-2">🌊 江南：轻盈灵动，水网纵横</h4>
+                                    <p class="text-sm text-gray-700 leading-relaxed">江南水网密布，舟楫往来频繁。多建<span class="font-bold text-dark">薄墩薄拱高桥</span>以利通航，或修长跨度<span class="font-bold text-dark">石梁桥、连拱桥</span>（如宝带桥），极具水乡诗意。</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-600 hover:-translate-y-1 transition-transform">
+                                    <h4 class="font-bold text-green-700 mb-2 flex items-center gap-2">⛰️ 西南：绝壁飞渡，就地取材</h4>
+                                    <p class="text-sm text-gray-700 leading-relaxed">西南多高山峡谷，水流湍急难以立墩。先民利用竹木藤铁，创造了惊险奇绝的<span class="font-bold text-dark">索桥</span>与不用一钉的<span class="font-bold text-dark">木拱廊桥</span>（如都江堰安澜索桥）。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="provinceBridgesPanel" class="absolute inset-0 bg-white p-6 flex flex-col transition-transform duration-500 transform translate-x-full z-10 hidden">
+                            </div>
+
+                    </div>
                 </div>
             </div>
-
-            <p class="mt-6 text-gray-600 text-center flex items-center justify-center gap-2">
-                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122">
-                    </path>
-                </svg>
-                点击高亮省份，可查看该地区代表性古代桥梁详情
-            </p>
         </section>
 
         <!-- 2. 各朝代桥梁数量统计 -->
@@ -1171,72 +1206,87 @@ section {
 
         // 地图点击事件：显示省份桥梁
         // ================= 优化地图点击事件 =================
+        // ================= 优化地图点击事件 (右侧面板联动) =================
         bridgeMap.on('click', function (params) {
             const province = params.name;
-            const bridges = provinceBridgesData[province];
+            const bridges = provinceBridgesData[province] || [];
+            
+            const defaultPanel = document.getElementById('defaultRegionInfo');
+            const dynamicPanel = document.getElementById('provinceBridgesPanel');
 
-            // 自动平滑滚动到展示区
-            document.getElementById('dynasty').scrollIntoView({ behavior: 'smooth' });
-
-            const container = document.getElementById('dynastyBridges');
-
-            // 过渡动画
-            container.style.opacity = '0';
-            container.style.transform = 'translateY(20px)';
-            container.style.transition = 'all 0.4s ease';
-
+            // 动画准备：隐藏默认的地域风貌，滑入具体桥梁档案
+            dynamicPanel.classList.remove('hidden');
+            defaultPanel.style.opacity = '0';
+            defaultPanel.style.transform = 'translateX(-20px)';
+            
             setTimeout(() => {
-                container.innerHTML = ''; // 清空原有内容
+                defaultPanel.classList.add('hidden');
+                
+                // 构建右侧展示内容
+                dynamicPanel.innerHTML = `
+                    <div class="flex justify-between items-center mb-4 border-b-2 border-primary/20 pb-3">
+                        <h3 class="text-2xl font-bold text-primary flex items-center gap-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            ${province} 古桥
+                        </h3>
+                        <button id="closePanelBtn" class="text-gray-400 hover:text-primary transition-colors flex items-center gap-1 text-sm bg-secondary/10 px-3 py-1 rounded-full">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                            返回全览
+                        </button>
+                    </div>
+                `;
 
-                if (!bridges || bridges.length === 0) {
-                    container.innerHTML = `
-                        <div class="col-span-full p-6 bg-secondary/10 border-l-4 border-primary rounded-r-lg">
-                            <h3 class="text-xl font-bold text-dark mb-2">地理寻踪：${province}</h3>
-                            <p class="text-gray-600">该地区的古桥梁档案正在进一步考证与录入中，敬请期待...</p>
+                // 填充数据
+                if (bridges.length === 0) {
+                    dynamicPanel.innerHTML += `
+                        <div class="flex-1 flex flex-col items-center justify-center text-gray-400">
+                            <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            <p>该地区名桥档案正在考证录入中</p>
                         </div>
                     `;
                 } else {
-                    // 添加省份标题横幅
-                    const titleBanner = document.createElement('div');
-                    titleBanner.className = 'col-span-full mb-4 pb-2 border-b-2 border-primary/20 flex items-center justify-between';
-                    titleBanner.innerHTML = `
-                        <h3 class="text-2xl font-bold text-primary flex items-center gap-2">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            ${province} 古桥巡礼
-                        </h3>
-                        <span class="text-sm text-gray-500">共收录 ${bridges.length} 座经典桥梁</span>
-                    `;
-                    container.appendChild(titleBanner);
-
-                    // 遍历生成该省份的桥梁卡片
+                    const listContainer = document.createElement('div');
+                    listContainer.className = 'flex-1 overflow-y-auto hide-scrollbar space-y-4 pr-2 pb-4';
+                    
                     bridges.forEach((bridge, index) => {
                         const card = document.createElement('div');
-                        card.className = 'bridge-card p-6 border-t-4 border-primary bg-white shadow-md rounded-lg';
-                        // 使用你之前配置的 fadeInUp 动画
-                        card.style.animation = `fadeInUp 0.6s ease-out ${index * 0.15}s forwards`;
+                        card.className = 'p-4 bg-secondary/10 border-l-4 border-primary rounded-r-lg hover:bg-secondary/20 transition-colors shadow-sm';
+                        // 使用你之前定义的 fadeInUp 动画
+                        card.style.animation = `fadeInUp 0.4s ease-out ${index * 0.1}s forwards`;
                         card.style.opacity = '0';
-
                         card.innerHTML = `
-                            <div class="flex justify-between items-start mb-3">
-                                <h4 class="text-2xl font-bold text-dark">${bridge.name}</h4>
-                                <span class="bg-secondary/20 text-primary text-xs px-2 py-1 rounded-full font-bold border border-secondary/50">
-                                    ${bridge.dynasty}
-                                </span>
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="text-lg font-bold text-dark">${bridge.name}</h4>
+                                <span class="bg-white text-primary text-xs px-2 py-1 rounded border border-primary/20">${bridge.dynasty}</span>
                             </div>
-                            <div class="text-sm text-primary/80 mb-3 flex items-center gap-1 font-semibold">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                                桥梁结构：${bridge.type}
-                            </div>
-                            <p class="text-gray-700 leading-relaxed text-sm">${bridge.desc}</p>
+                            <div class="text-xs text-primary font-bold mb-2">结构：${bridge.type}</div>
+                            <p class="text-sm text-gray-700 leading-relaxed">${bridge.desc}</p>
                         `;
-                        container.appendChild(card);
+                        listContainer.appendChild(card);
                     });
+                    dynamicPanel.appendChild(listContainer);
                 }
 
-                // 恢复可见并滑入
-                container.style.opacity = '1';
-                container.style.transform = 'translateY(0)';
-            }, 400);
+                // 绑定“返回全览”按钮事件
+                document.getElementById('closePanelBtn').addEventListener('click', () => {
+                    dynamicPanel.style.transform = 'translateX(100%)'; // 滑出
+                    setTimeout(() => {
+                        dynamicPanel.classList.add('hidden');
+                        defaultPanel.classList.remove('hidden');
+                        setTimeout(() => {
+                            defaultPanel.style.opacity = '1';
+                            defaultPanel.style.transform = 'translateX(0)'; // 默认页滑入
+                        }, 50);
+                    }, 400);
+                });
+
+                // 新面板显示动画
+                dynamicPanel.classList.remove('hidden');
+                setTimeout(() => {
+                    dynamicPanel.style.transform = 'translateX(0)';
+                }, 50);
+
+            }, 300);
         });
         // ================= 替换结束 =================
 
