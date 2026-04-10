@@ -291,7 +291,7 @@ section {
 
     <main class="container mx-auto px-4 py-12">
         <!-- 1. 中国地图古代桥梁分布图 -->
-       <section id="map" class="mb-16">
+        <section id="map" class="mb-16">
             <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
                 <h2 class="text-3xl font-bold text-dark border-l-4 border-primary pl-4">地理寻踪：中国古桥分布与地域风格</h2>
                 <span class="mt-2 md:mt-0 text-sm text-primary/80 bg-secondary/20 px-3 py-1 rounded-full inline-block">
@@ -300,43 +300,64 @@ section {
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
+
                 <div class="lg:col-span-7 xl:col-span-8">
                     <div class="p-2 bg-secondary/30 rounded-xl shadow-2xl border border-secondary/50 h-full">
-                        <div class="p-1 bg-[#FAF8F5] rounded-lg border-2 border-dashed border-secondary h-full relative">
+                        <div
+                            class="p-1 bg-[#FAF8F5] rounded-lg border-2 border-dashed border-secondary h-full relative">
                             <div id="bridgeMap" class="w-full h-[500px] md:h-[600px] rounded-lg"></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="lg:col-span-5 xl:col-span-4 h-[500px] md:h-[635px]">
-                    <div class="bg-white rounded-xl shadow-2xl border border-secondary/30 p-6 h-full flex flex-col relative overflow-hidden">
-                        
+                    <div
+                        class="bg-white rounded-xl shadow-2xl border border-secondary/30 p-6 h-full flex flex-col relative overflow-hidden">
+
                         <div id="defaultRegionInfo" class="h-full flex flex-col transition-all duration-500">
-                            <h3 class="text-2xl font-bold text-dark mb-4 border-b-2 border-primary/20 pb-3 flex items-center gap-2">
-                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            <h3
+                                class="text-2xl font-bold text-dark mb-4 border-b-2 border-primary/20 pb-3 flex items-center gap-2">
+                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                                    </path>
+                                </svg>
                                 营建智慧与地域风貌
                             </h3>
-                            <p class="text-gray-600 mb-6 text-sm leading-relaxed">中国幅员辽阔，多样的自然地理环境孕育了各具特色的桥梁建筑风格。古人“因地制宜、就地取材”，展现了令人叹为观止的工程智慧。</p>
-                            
+                            <p class="text-gray-600 mb-6 text-sm leading-relaxed">
+                                中国幅员辽阔，多样的自然地理环境孕育了各具特色的桥梁建筑风格。古人“因地制宜、就地取材”，展现了令人叹为观止的工程智慧。</p>
+
                             <div class="space-y-4 flex-1 hide-scrollbar overflow-y-auto pr-2">
-                                <div class="bg-secondary/10 p-4 rounded-lg border-l-4 border-primary hover:-translate-y-1 transition-transform">
-                                    <h4 class="font-bold text-primary mb-2 flex items-center gap-2">🏞️ 北方：厚重沉稳，抵御洪汛</h4>
-                                    <p class="text-sm text-gray-700 leading-relaxed">北方河流多平缓宽阔，且常有夏汛与冬冰。桥梁多采用坚固的<span class="font-bold text-dark">厚墩石拱桥</span>（如赵州桥、卢沟桥），注重结构强度与泄洪防冰能力。</p>
+                                <div
+                                    class="bg-secondary/10 p-4 rounded-lg border-l-4 border-primary hover:-translate-y-1 transition-transform">
+                                    <h4 class="font-bold text-primary mb-2 flex items-center gap-2">🏞️ 北方：厚重沉稳，抵御洪汛
+                                    </h4>
+                                    <p class="text-sm text-gray-700 leading-relaxed">北方河流多平缓宽阔，且常有夏汛与冬冰。桥梁多采用坚固的<span
+                                            class="font-bold text-dark">厚墩石拱桥</span>（如赵州桥、卢沟桥），注重结构强度与泄洪防冰能力。</p>
                                 </div>
-                                <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400 hover:-translate-y-1 transition-transform">
-                                    <h4 class="font-bold text-blue-700 mb-2 flex items-center gap-2">🌊 江南：轻盈灵动，水网纵横</h4>
-                                    <p class="text-sm text-gray-700 leading-relaxed">江南水网密布，舟楫往来频繁。多建<span class="font-bold text-dark">薄墩薄拱高桥</span>以利通航，或修长跨度<span class="font-bold text-dark">石梁桥、连拱桥</span>（如宝带桥），极具水乡诗意。</p>
+                                <div
+                                    class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400 hover:-translate-y-1 transition-transform">
+                                    <h4 class="font-bold text-blue-700 mb-2 flex items-center gap-2">🌊 江南：轻盈灵动，水网纵横
+                                    </h4>
+                                    <p class="text-sm text-gray-700 leading-relaxed">江南水网密布，舟楫往来频繁。多建<span
+                                            class="font-bold text-dark">薄墩薄拱高桥</span>以利通航，或修长跨度<span
+                                            class="font-bold text-dark">石梁桥、连拱桥</span>（如宝带桥），极具水乡诗意。</p>
                                 </div>
-                                <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-600 hover:-translate-y-1 transition-transform">
-                                    <h4 class="font-bold text-green-700 mb-2 flex items-center gap-2">⛰️ 西南：绝壁飞渡，就地取材</h4>
-                                    <p class="text-sm text-gray-700 leading-relaxed">西南多高山峡谷，水流湍急难以立墩。先民利用竹木藤铁，创造了惊险奇绝的<span class="font-bold text-dark">索桥</span>与不用一钉的<span class="font-bold text-dark">木拱廊桥</span>（如都江堰安澜索桥）。</p>
+                                <div
+                                    class="bg-green-50 p-4 rounded-lg border-l-4 border-green-600 hover:-translate-y-1 transition-transform">
+                                    <h4 class="font-bold text-green-700 mb-2 flex items-center gap-2">⛰️ 西南：绝壁飞渡，就地取材
+                                    </h4>
+                                    <p class="text-sm text-gray-700 leading-relaxed">
+                                        西南多高山峡谷，水流湍急难以立墩。先民利用竹木藤铁，创造了惊险奇绝的<span
+                                            class="font-bold text-dark">索桥</span>与不用一钉的<span
+                                            class="font-bold text-dark">木拱廊桥</span>（如都江堰安澜索桥）。</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div id="provinceBridgesPanel" class="absolute inset-0 bg-white p-6 flex flex-col transition-transform duration-500 transform translate-x-full z-10 hidden">
-                            </div>
+                        <div id="provinceBridgesPanel"
+                            class="absolute inset-0 bg-white p-6 flex flex-col transition-transform duration-500 transform translate-x-full z-10 hidden">
+                        </div>
 
                     </div>
                 </div>
@@ -1210,7 +1231,7 @@ section {
         bridgeMap.on('click', function (params) {
             const province = params.name;
             const bridges = provinceBridgesData[province] || [];
-            
+
             const defaultPanel = document.getElementById('defaultRegionInfo');
             const dynamicPanel = document.getElementById('provinceBridgesPanel');
 
@@ -1218,10 +1239,10 @@ section {
             dynamicPanel.classList.remove('hidden');
             defaultPanel.style.opacity = '0';
             defaultPanel.style.transform = 'translateX(-20px)';
-            
+
             setTimeout(() => {
                 defaultPanel.classList.add('hidden');
-                
+
                 // 构建右侧展示内容
                 dynamicPanel.innerHTML = `
                     <div class="flex justify-between items-center mb-4 border-b-2 border-primary/20 pb-3">
@@ -1247,7 +1268,7 @@ section {
                 } else {
                     const listContainer = document.createElement('div');
                     listContainer.className = 'flex-1 overflow-y-auto hide-scrollbar space-y-4 pr-2 pb-4';
-                    
+
                     bridges.forEach((bridge, index) => {
                         const card = document.createElement('div');
                         card.className = 'p-4 bg-secondary/10 border-l-4 border-primary rounded-r-lg hover:bg-secondary/20 transition-colors shadow-sm';
@@ -1269,6 +1290,19 @@ section {
 
                 // 绑定“返回全览”按钮事件
                 document.getElementById('closePanelBtn').addEventListener('click', () => {
+                    bridgeMap.dispatchAction({
+                        type: 'downplay',
+                        name: province
+                    });
+                    // 2. 取消该省份的选中状态（防止它被判定为 selected）
+                    bridgeMap.dispatchAction({
+                        type: 'unselect',
+                        name: province
+                    });
+                    // 3. 强制隐藏悬浮提示框（Tooltip）
+                    bridgeMap.dispatchAction({
+                        type: 'hideTip'
+                    });
                     dynamicPanel.style.transform = 'translateX(100%)'; // 滑出
                     setTimeout(() => {
                         dynamicPanel.classList.add('hidden');
