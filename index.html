@@ -1410,9 +1410,32 @@ function renderProvinceContent(panel, province, bridges) {
     }
 
     // 重新绑定返回按钮事件（因为 innerHTML 被重置了）
+    // 重新绑定返回按钮事件（确保取消地图省份高亮和字样）
     document.getElementById('closePanelBtn').onclick = function() {
-        // 这里放入你之前的返回全览逻辑
         const defaultPanel = document.getElementById('defaultRegionInfo');
+        const panel = document.getElementById('provinceBridgesPanel');
+
+        // 1. 执行地图动作：精准取消刚才点击省份的高亮和选中状态
+        if (typeof bridgeMap !== 'undefined') {
+            // 取消高亮
+            bridgeMap.dispatchAction({
+                type: 'downplay',
+                seriesIndex: 0,
+                name: province // 使用闭包传进来的省份名
+            });
+            // 取消选中（彻底去除文字残留）
+            bridgeMap.dispatchAction({
+                type: 'unselect',
+                seriesIndex: 0,
+                name: province
+            });
+            // 隐藏提示框
+            bridgeMap.dispatchAction({
+                type: 'hideTip'
+            });
+        }
+
+        // 2. 面板切换动画
         panel.style.transform = 'translateX(100%)';
         setTimeout(() => {
             panel.classList.add('hidden');
@@ -1422,9 +1445,6 @@ function renderProvinceContent(panel, province, bridges) {
                 defaultPanel.style.transform = 'translateX(0)';
             }, 50);
         }, 400);
-        // 清除地图高亮
-        bridgeMap.dispatchAction({ type: 'downplay' });
-        bridgeMap.dispatchAction({ type: 'unselect' });
     };
 }
         // ================= 替换结束 =================
