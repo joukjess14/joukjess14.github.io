@@ -181,7 +181,9 @@
     /* 隐藏 IE 下的滚动条 */
     -ms-overflow-style: none; 
 }
-
+#provinceBridgesPanel {
+    transition: transform 0.5s ease, opacity 0.3s ease;
+}
 /* 针对 Chrome, Safari 和 Edge 隐藏滚动条 */
 #bridgeModalContent::-webkit-scrollbar,
 .overflow-y-auto::-webkit-scrollbar {
@@ -1328,100 +1330,103 @@ section {
         // 地图点击事件：显示省份桥梁
         // ================= 优化地图点击事件 =================
         // ================= 优化地图点击事件 (右侧面板联动) =================
-        bridgeMap.on('click', function (params) {
-            const province = params.name;
-            const bridges = provinceBridgesData[province] || [];
+        // ================= 优化地图点击事件：增加内容切换动画 =================
+bridgeMap.on('click', function (params) {
+    const province = params.name;
+    const bridges = provinceBridgesData[province] || [];
+    
+    const defaultPanel = document.getElementById('defaultRegionInfo');
+    const dynamicPanel = document.getElementById('provinceBridgesPanel');
 
-            const defaultPanel = document.getElementById('defaultRegionInfo');
-            const dynamicPanel = document.getElementById('provinceBridgesPanel');
+    // 1. 如果是第一次从默认面板切换到省份面板
+    if (!defaultPanel.classList.contains('hidden')) {
+        dynamicPanel.classList.remove('hidden');
+        defaultPanel.style.opacity = '0';
+        defaultPanel.style.transform = 'translateX(-20px)';
+        
+        setTimeout(() => {
+            defaultPanel.classList.add('hidden');
+            renderProvinceContent(dynamicPanel, province, bridges);
+            dynamicPanel.style.transform = 'translateX(0)';
+        }, 300);
+    } else {
+        // 2. 核心改进：如果是省份之间互相切换，增加“闪烁”或“平滑过渡”
+        // 先让当前内容淡出
+        dynamicPanel.style.opacity = '0';
+        dynamicPanel.style.transform = 'translateY(10px)';
+        
+        setTimeout(() => {
+            // 在不可见状态下替换内容
+            renderProvinceContent(dynamicPanel, province, bridges);
+            
+            // 重新淡入
+            dynamicPanel.style.opacity = '1';
+            dynamicPanel.style.transform = 'translateY(0)';
+        }, 250); // 250ms 后替换内容
+    }
+});
 
-            // 动画准备：隐藏默认的地域风貌，滑入具体桥梁档案
-            dynamicPanel.classList.remove('hidden');
-            defaultPanel.style.opacity = '0';
-            defaultPanel.style.transform = 'translateX(-20px)';
+// 为了代码整洁，建议将渲染逻辑抽离成一个函数
+function renderProvinceContent(panel, province, bridges) {
+    panel.innerHTML = `
+        <div class="flex justify-between items-center mb-4 border-b-2 border-primary/20 pb-3">
+            <h3 class="text-2xl font-bold text-primary flex items-center gap-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                ${province} 古桥
+            </h3>
+            <button id="closePanelBtn" class="text-gray-400 hover:text-primary transition-colors flex items-center gap-1 text-sm bg-secondary/10 px-3 py-1 rounded-full">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                返回全览
+            </button>
+        </div>
+    `;
 
-            setTimeout(() => {
-                defaultPanel.classList.add('hidden');
-
-                // 构建右侧展示内容
-                dynamicPanel.innerHTML = `
-                    <div class="flex justify-between items-center mb-4 border-b-2 border-primary/20 pb-3">
-                        <h3 class="text-2xl font-bold text-primary flex items-center gap-2">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            ${province} 古桥
-                        </h3>
-                        <button id="closePanelBtn" class="text-gray-400 hover:text-primary transition-colors flex items-center gap-1 text-sm bg-secondary/10 px-3 py-1 rounded-full">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                            返回全览
-                        </button>
-                    </div>
-                `;
-
-                // 填充数据
-                if (bridges.length === 0) {
-                    dynamicPanel.innerHTML += `
-                        <div class="flex-1 flex flex-col items-center justify-center text-gray-400">
-                            <svg class="w-16 h-16 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                            <p>该地区名桥档案正在考证录入中</p>
-                        </div>
-                    `;
-                } else {
-                    const listContainer = document.createElement('div');
-                    listContainer.className = 'flex-1 overflow-y-auto hide-scrollbar space-y-4 pr-2 pb-4';
-
-                    bridges.forEach((bridge, index) => {
-                        const card = document.createElement('div');
-                        card.className = 'p-4 bg-secondary/10 border-l-4 border-primary rounded-r-lg hover:bg-secondary/20 transition-colors shadow-sm';
-                        // 使用你之前定义的 fadeInUp 动画
-                        card.style.animation = `fadeInUp 0.4s ease-out ${index * 0.1}s forwards`;
-                        card.style.opacity = '0';
-                        card.innerHTML = `
-                            <div class="flex justify-between items-start mb-2">
-                                <h4 class="text-lg font-bold text-dark">${bridge.name}</h4>
-                                <span class="bg-white text-primary text-xs px-2 py-1 rounded border border-primary/20">${bridge.dynasty}</span>
-                            </div>
-                            <div class="text-xs text-primary font-bold mb-2">结构：${bridge.type}</div>
-                            <p class="text-sm text-gray-700 leading-relaxed">${bridge.desc}</p>
-                        `;
-                        listContainer.appendChild(card);
-                    });
-                    dynamicPanel.appendChild(listContainer);
-                }
-
-                // 绑定“返回全览”按钮事件
-                document.getElementById('closePanelBtn').addEventListener('click', () => {
-                    bridgeMap.dispatchAction({
-                        type: 'downplay',
-                        name: province
-                    });
-                    // 2. 取消该省份的选中状态（防止它被判定为 selected）
-                    bridgeMap.dispatchAction({
-                        type: 'unselect',
-                        name: province
-                    });
-                    // 3. 强制隐藏悬浮提示框（Tooltip）
-                    bridgeMap.dispatchAction({
-                        type: 'hideTip'
-                    });
-                    dynamicPanel.style.transform = 'translateX(100%)'; // 滑出
-                    setTimeout(() => {
-                        dynamicPanel.classList.add('hidden');
-                        defaultPanel.classList.remove('hidden');
-                        setTimeout(() => {
-                            defaultPanel.style.opacity = '1';
-                            defaultPanel.style.transform = 'translateX(0)'; // 默认页滑入
-                        }, 50);
-                    }, 400);
-                });
-
-                // 新面板显示动画
-                dynamicPanel.classList.remove('hidden');
-                setTimeout(() => {
-                    dynamicPanel.style.transform = 'translateX(0)';
-                }, 50);
-
-            }, 300);
+    if (bridges.length === 0) {
+        panel.innerHTML += `
+            <div class="flex-1 flex flex-col items-center justify-center text-gray-400">
+                <p>该地区名桥档案正在考证录入中</p>
+            </div>
+        `;
+    } else {
+        const listContainer = document.createElement('div');
+        listContainer.className = 'flex-1 overflow-y-auto hide-scrollbar space-y-4 pr-2 pb-4';
+        
+        bridges.forEach((bridge, index) => {
+            const card = document.createElement('div');
+            card.className = 'p-4 bg-secondary/10 border-l-4 border-primary rounded-r-lg hover:bg-secondary/20 transition-colors shadow-sm';
+            // 使用你的 fadeInUp 动画，并增加微小的延迟感
+            card.style.animation = `fadeInUp 0.4s ease-out ${index * 0.05}s forwards`;
+            card.style.opacity = '0';
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <h4 class="text-lg font-bold text-dark">${bridge.name}</h4>
+                    <span class="bg-white text-primary text-xs px-2 py-1 rounded border border-primary/20">${bridge.dynasty}</span>
+                </div>
+                <p class="text-sm text-gray-700 leading-relaxed">${bridge.desc}</p>
+            `;
+            listContainer.appendChild(card);
         });
+        panel.appendChild(listContainer);
+    }
+
+    // 重新绑定返回按钮事件（因为 innerHTML 被重置了）
+    document.getElementById('closePanelBtn').onclick = function() {
+        // 这里放入你之前的返回全览逻辑
+        const defaultPanel = document.getElementById('defaultRegionInfo');
+        panel.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            panel.classList.add('hidden');
+            defaultPanel.classList.remove('hidden');
+            setTimeout(() => {
+                defaultPanel.style.opacity = '1';
+                defaultPanel.style.transform = 'translateX(0)';
+            }, 50);
+        }, 400);
+        // 清除地图高亮
+        bridgeMap.dispatchAction({ type: 'downplay' });
+        bridgeMap.dispatchAction({ type: 'unselect' });
+    };
+}
         // ================= 替换结束 =================
 
         // 显示桥梁详情弹窗
