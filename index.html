@@ -192,6 +192,12 @@ html {
     scroll-behavior: smooth;
 }
 
+/* 让背景切换时带有淡入淡出效果，去掉叠加模式，让图片更清亮 */
+#hero-section {
+    transition: background-image 1.5s ease-in-out;
+    background-size: cover;
+    background-position: center;
+}
 /* 2. 解决吸顶导航遮挡：给所有 section 设置滚动边距 */
 /* 这里的 80px 应该略大于你导航栏的高度，这样跳转后标题下方会留出一些“呼吸感” */
 section {
@@ -211,7 +217,6 @@ section {
 </head>
 
 <body class="bg-[#F5F5DC] font-chinese text-dark">
-    <!-- 导航栏 -->
     <!-- 导航栏 -->
     <header class="sticky top-0 z-50 bg-primary text-white shadow-md">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -274,12 +279,13 @@ section {
     </header>
 
     <!-- 英雄区 -->
-    <section class="bg-[url('/images/cover/bg.png')] bg-cover bg-center h-[60vh] relative">
-        <div class="absolute inset-0 bg-dark/60"></div>
-        <div class="container mx-auto px-4 h-full flex items-center relative z-10">
+    <section id="hero-section" class="bg-dark h-[60vh] relative overflow-hidden transition-all duration-1000">
+        <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent z-10"></div>
+        <div class="container mx-auto px-4 h-full flex items-center relative z-20">
             <div class="text-white max-w-2xl">
                 <h2 class="text-5xl font-bold mb-4 opacity-0 animate-fade-in-up" style="animation-delay: 0.2s;">
-                    一桥飞架南北，天堑变通途</h2>
+                    一桥飞架南北，天堑变通途
+                </h2>
                 <p class="text-xl mb-6 opacity-0 animate-fade-in-up" style="animation-delay: 0.4s;">探索中国古代桥梁的建筑智慧与文化传承
                 </p>
                 <a href="#map"
@@ -400,7 +406,7 @@ section {
 
                 <div class="bridge-card p-6 flex flex-col md:flex-row gap-6 border-t-4 border-primary">
                     <div class="w-full md:w-2/5 h-52 bg-gray-200 rounded-lg overflow-hidden shrink-0">
-                        <img src="images\famous_bridges\zhaozhou_1.png" alt="赵州桥" class="w-full h-full object-cover">
+                        <img src="images/famous_bridges/zhaozhou_1.png" alt="赵州桥" class="w-full h-full object-cover">
                     </div>
                     <div class="flex flex-col justify-between flex-grow">
                         <div>
@@ -422,7 +428,7 @@ section {
 
                 <div class="bridge-card p-6 flex flex-col md:flex-row gap-6 border-t-4 border-primary">
                     <div class="w-full md:w-2/5 h-52 bg-gray-200 rounded-lg overflow-hidden shrink-0">
-                        <img src="images\famous_bridges\luoyang_1.png" alt="洛阳桥" class="w-full h-full object-cover">
+                        <img src="images/famous_bridges/luoyang_1.png" alt="洛阳桥" class="w-full h-full object-cover">
                     </div>
                     <div class="flex flex-col justify-between flex-grow">
                         <div>
@@ -444,7 +450,7 @@ section {
 
                 <div class="bridge-card p-6 flex flex-col md:flex-row gap-6 border-t-4 border-primary">
                     <div class="w-full md:w-2/5 h-52 bg-gray-200 rounded-lg overflow-hidden shrink-0">
-                        <img src="images\famous_bridges\lugou_1.png" alt="卢沟桥" class="w-full h-full object-cover">
+                        <img src="images/famous_bridges/lugou_1.png" alt="卢沟桥" class="w-full h-full object-cover">
                     </div>
                     <div class="flex flex-col justify-between flex-grow">
                         <div>
@@ -466,7 +472,7 @@ section {
 
                 <div class="bridge-card p-6 flex flex-col md:flex-row gap-6 border-t-4 border-primary">
                     <div class="w-full md:w-2/5 h-52 bg-gray-200 rounded-lg overflow-hidden shrink-0">
-                        <img src="images\famous_bridges\guangji_1.png" alt="广济桥" class="w-full h-full object-cover">
+                        <img src="images/famous_bridges/guangji_1.png" alt="广济桥" class="w-full h-full object-cover">
                     </div>
                     <div class="flex flex-col justify-between flex-grow">
                         <div>
@@ -496,7 +502,7 @@ section {
             <div class="flex justify-center flex-wrap gap-8 md:gap-16 mb-12">
                 <div class="flex flex-col items-center group" onclick="showScientist('lichun', this)">
                     <div class="scientist-avatar" id="avatar-lichun">
-                        <img src="images\scientists\lichun.png" class="w-full h-full object-cover object-top">
+                        <img src="images/scientists/lichun.png" class="w-full h-full object-cover object-top">
                     </div>
                     <span class="mt-4 font-bold text-lg text-dark group-hover:text-primary transition-colors">李春</span>
                 </div>
@@ -659,28 +665,51 @@ section {
         </div>
     </div>
 
-    <!-- 交互弹窗：结构详情 -->
-    <div id="structureModal" class="fixed inset-0 z-[1000] bg-black/80 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 id="structureModalTitle" class="text-3xl font-bold text-dark"></h3>
-                    <button onclick="closeModal('structureModal')"
-                        class="text-gray-500 hover:text-dark text-3xl">&times;</button>
-                </div>
-                <div id="structureModalContent" class="space-y-6">
-                    <!-- 动态加载内容 -->
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
         // 移动端菜单切换
         document.getElementById('menuBtn').addEventListener('click', function () {
             document.getElementById('mobileMenu').classList.toggle('hidden');
         });
+        // ================= 背景图片自动轮播逻辑 =================
+        function initHeroSlider() {
+            const hero = document.getElementById('hero-section');
+            if (!hero) return;
 
+            // 1. 定义图片路径数组
+            const bgImages = [
+                'images/cover/bg1.png',
+                'images/cover/bg2.png',
+                'images/cover/bg3.png',
+                'images/cover/bg4.png',
+                'images/cover/bg5.png'
+            ];
+
+            let currentIndex = 0;
+
+            // 2. 预加载图片（防止切换时出现短暂空白）
+            bgImages.forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+
+            // 3. 切换背景的函数
+            function changeBackground() {
+                // 应用下一张图片
+                hero.style.backgroundImage = `url('${bgImages[currentIndex]}')`;
+
+                // 计算下一个索引
+                currentIndex = (currentIndex + 1) % bgImages.length;
+            }
+
+            // 4. 初始化执行一次
+            changeBackground();
+
+            // 5. 设置定时器：每 6 秒切换一次 (1.5s 淡入淡出 + 4.5s 展示)
+            setInterval(changeBackground, 6000);
+        }
+
+        // 在页面加载完成后启动
+        window.addEventListener('load', initHeroSlider);
         // 弹窗控制
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
@@ -820,15 +849,6 @@ section {
                         culture: '“地随人走”的命名体现家国情怀；蔡襄撰书《万安桥记》碑刻世称“三绝”。'
                     },
                     {
-                        name: '广济桥（湘子桥）',
-                        dynasty: '南宋乾道七年（1171年）',
-                        size: '全长518米，桥面宽约5米',
-                        material: '石砌桥墩与石梁，中段以18只木船连为浮桥',
-                        feature: '“十八梭船廿四洲”。世界最早启闭式桥梁，集梁桥、拱桥、浮桥于一体。日间连桥通行，夜间启闭通航。',
-                        achievement: '单根石梁重达50-60吨。被茅以升誉为“世界上最早的启闭式桥梁”。',
-                        culture: '“一里长桥一里市”的商业景观；桥亭陈列潮州非遗（潮绣、木雕等）。'
-                    },
-                    {
                         name: '卢沟桥',
                         dynasty: '金大定二十九年（1189年）',
                         size: '全长266.5米，桥面宽9.3米，11孔不等跨圆拱',
@@ -838,7 +858,6 @@ section {
                         culture: '石狮子“数不清”（共约489只）；乾隆题字“卢沟晓月”；“卢沟桥事变”发生地，民族精神象征。'
                     }
                 ],
-                // 在 dynastyData.bridges 中补充
                 '唐': [
                     {
                         name: '广济桥（湘子桥）',
@@ -886,9 +905,6 @@ section {
                 // 其他朝代可补充
             }
         };
-
-        // 初始化朝代统计图表
-        // ================= 开始替换：朝代统计图表优化 =================
         // 重新初始化朝代统计图表
         const dynastyChart = echarts.init(document.getElementById('dynastyChart'));
 
@@ -972,7 +988,8 @@ section {
         dynastyChart.setOption(option);
 
         // 优化后的点击事件：带过渡动画
-        dynastyChart.on('click', function (params) {
+        // ================= 优化后的点击事件：带过渡动画，保留四大名桥，并动态加载图片 =================
+        ('click', function (params) {
             const container = document.getElementById('dynastyBridges');
 
             // 1. 先让容器变透明，准备切换内容
@@ -982,8 +999,10 @@ section {
 
             setTimeout(() => {
                 const dynasty = params.name;
+                // 取出该朝代的所有桥梁数据
                 const bridges = dynastyData.bridges[dynasty] || [];
-                container.innerHTML = '';
+
+                container.innerHTML = ''; dynastyChart.on
 
                 if (bridges.length === 0) {
                     container.innerHTML = `
@@ -991,13 +1010,21 @@ section {
                             <p class="text-gray-400">《${dynasty}代桥梁志》正在整理中...</p>
                         </div>`;
                 } else {
+                    // 直接遍历所有桥梁（不再过滤，保留四大名桥）
                     bridges.forEach((bridge, index) => {
                         const card = document.createElement('div');
                         card.style.animationDelay = `${index * 0.1}s`;
                         card.className = 'bridge-card p-6 animate-fadeInUp';
+
+                        // 动态获取图片路径（如果映射表中没有，则使用占位图）
+                        const pinyin = listImageMap[bridge.name];
+                        const imageSrc = pinyin
+                            ? `images/famous_bridges/${pinyin}_1.png`
+                            : `https://via.placeholder.com/800x400?text=${bridge.name}`;
+
                         card.innerHTML = `
                             <div class="relative h-48 bg-gray-100 rounded-lg mb-4 overflow-hidden group">
-                                <img src="https://via.placeholder.com/800x400?text=${bridge.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                <img src="${imageSrc}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                                 <div class="absolute top-2 right-2 bg-primary/90 text-white text-xs px-2 py-1 rounded shadow-md">
                                     ${bridge.material}
                                 </div>
@@ -1041,26 +1068,60 @@ section {
                     <p class="text-gray-400">《${dynasty}代桥梁志》正在整理中...</p>
                 </div>`;
                 } else {
+                    // ================= 终极兼容版：模糊匹配逻辑 =================
                     bridges.forEach((bridge, index) => {
                         const card = document.createElement('div');
-                        // 增加逐个浮现的动画延迟
                         card.style.animationDelay = `${index * 0.1}s`;
                         card.className = 'bridge-card p-6 animate-fadeInUp';
+
+                        // 1. 获取当前桥梁的名字并去除空格，统一转为字符串
+                        const bName = String(bridge.name).trim();
+
+                        // 2. 建立模糊匹配字典 (只要名字包含左边的词，就映射到右边的拼音)
+                        const fuzzyMap = {
+                            '赵州': 'zhaozhou',
+                            '安济': 'zhaozhou',
+                            '洛阳': 'luoyang',
+                            '万安': 'luoyang',
+                            '广济': 'guangji',
+                            '湘子': 'guangji',
+                            '卢沟': 'lugou',
+                            '安平': 'anping',
+                            '五里': 'anping',
+                            '宝带': 'baodai',
+                            '十七孔': 'shiqikong',
+                            '晋祠': 'jinci'
+                        };
+
+                        // 3. 执行查找
+                        let pinyin = null;
+                        for (let key in fuzzyMap) {
+                            if (bName.indexOf(key) !== -1) { // 只要包含关键字就匹配
+                                pinyin = fuzzyMap[key];
+                                break;
+                            }
+                        }
+
+                        // 4. 确定图片路径
+                        const imageSrc = pinyin
+                            ? `images/famous_bridges/${pinyin}_1.png`
+                            : `https://via.placeholder.com/800x400?text=${encodeURIComponent(bName)}`;
+
                         card.innerHTML = `
-                    <div class="relative h-48 bg-gray-100 rounded-lg mb-4 overflow-hidden group">
-                        <img src="https://via.placeholder.com/800x400?text=${bridge.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                        <div class="absolute top-2 right-2 bg-primary/90 text-white text-xs px-2 py-1 rounded shadow-md">
-                            ${bridge.material}
+                        <div class="relative h-48 bg-gray-100 rounded-lg mb-4 overflow-hidden group">
+                            <img src="${imageSrc}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            <div class="absolute top-2 right-2 bg-primary/90 text-white text-xs px-2 py-1 rounded shadow-md">
+                                ${bridge.material}
+                            </div>
                         </div>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-1 text-dark">${bridge.name}</h3>
-                    <div class="w-10 h-1 bg-primary mb-4"></div>
-                    <p class="text-gray-600 text-sm mb-4 line-clamp-2">${bridge.feature}</p>
-                    <button class="w-full border border-primary text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-lg transition-all" 
-                            onclick="showBridgeDetail('${bridge.name}')">
-                        研读详情
-                    </button>
-                `;
+                        <h3 class="text-2xl font-bold mb-1 text-dark">${bName}</h3>
+                        <div class="w-10 h-1 bg-primary mb-4"></div>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">${bridge.feature}</p>
+                        <button class="w-full border border-primary text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-lg transition-all" 
+                                onclick="showBridgeDetail('${bName}')">
+                            研读详情
+                        </button>
+                    `;
                         container.appendChild(card);
                     });
                 }
@@ -1471,22 +1532,19 @@ section {
         });
 
         // 页面加载完成后自动触发隋代数据展示
+        // 页面加载完成后初始化默认状态（不自动加载任何朝代，等待用户点击）
         window.addEventListener('load', function () {
+            // 取消图表初始的高亮状态
             dynastyChart.dispatchAction({
-                type: 'highlight',
+                type: 'downplay',
                 seriesIndex: 0,
                 dataIndex: 0
             });
-            // 模拟点击隋代
-            dynastyChart.on('click', { seriesIndex: 0, dataIndex: 0 }, function () { });
+
+            // 恢复为默认的交互提示语
             document.getElementById('dynastyBridges').innerHTML = `
-                <div class="bridge-card p-6">
-                    <div class="h-48 bg-gray-200 rounded-lg mb-4 overflow-hidden">
-                        <img src="https://via.placeholder.com/800x400?text=赵州桥（安济桥）" alt="赵州桥" class="w-full h-full object-cover">
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2">赵州桥（安济桥）</h3>
-                    <p class="text-gray-600 mb-4">隋代代表性桥梁</p>
-                    <button class="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-lg transition-colors" onclick="showBridgeDetail('赵州桥（安济桥）')">查看详情</button>
+                <div class="col-span-full text-center py-12 border-2 border-dashed border-secondary/30 rounded-xl">
+                    <p class="text-secondary font-medium text-lg">点击上方图表中的朝代，溯源千年营建智慧</p>
                 </div>
             `;
         });
