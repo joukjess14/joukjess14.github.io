@@ -515,25 +515,7 @@ section {
         <section id="scientists" class="mb-24">
             <h2 class="section-title">杰出科学家</h2>
 
-            <div class="flex justify-center flex-wrap gap-8 md:gap-16 mb-12">
-                <div class="flex flex-col items-center group" onclick="showScientist('lichun', this)">
-                    <div class="scientist-avatar" id="avatar-lichun">
-                        <img src="images/scientists/lichun.png" class="w-full h-full object-cover object-top">
-                    </div>
-                    <span class="mt-4 font-bold text-lg text-dark group-hover:text-primary transition-colors">李春</span>
-                </div>
-                <div class="flex flex-col items-center group" onclick="showScientist('caixiang', this)">
-                    <div class="scientist-avatar" id="avatar-caixiang">
-                        <img src="images/scientists/caixiang.png" class="w-full h-full object-cover">
-                    </div>
-                    <span class="mt-4 font-bold text-lg text-dark group-hover:text-primary transition-colors">蔡襄</span>
-                </div>
-                <div class="flex flex-col items-center group" onclick="showScientist('maoyisheng', this)">
-                    <div class="scientist-avatar" id="avatar-maoyisheng">
-                        <img src="images/scientists/maoyisheng.png" class="w-full h-full object-cover">
-                    </div>
-                    <span class="mt-4 font-bold text-lg text-dark group-hover:text-primary transition-colors">茅以升</span>
-                </div>
+            <div id="scientist-avatar-container" class="flex justify-center flex-wrap gap-8 md:gap-16 mb-12">
             </div>
 
             <div id="scientist-detail-window" class="opacity-0">
@@ -785,47 +767,87 @@ section {
 
             document.body.style.overflow = 'auto';
         }
-        const scientistData = {
-            lichun: {
+        // ================= 科学家数据配置（以后只需改这里） =================
+        const allScientists = [
+            {
+                id: "lichun",
                 name: "李春",
-                period: "隋朝 (约公元590-608年)",
-                title: "赵州桥的设计者与建造者",
-                desc: "李春是世界上最早的敞肩石拱桥——赵州桥的设计者。他在人类建筑史上首创了‘敞肩拱’结构，将主拱圈两肩原有的实心改为四个小拱，既节省了石料、减轻了自重，又极大地增强了泄洪能力，是世界土木工程史上的奇迹。",
-                achievement: ["首创敞肩石拱设计", "主持修建安济桥", "对坦弧拱圈的精准计算"]
+                period: "隋朝",
+                title: "赵州桥的设计者",
+                img: "images/scientists/lichun.png",
+                desc: "李春首创了‘敞肩拱’结构，将主拱圈两肩原有的实心改为四个小拱，既节省石料、减轻自重，又极大地增强了泄洪能力。",
+                achievement: ["首创敞肩石拱设计", "主持修建安济桥"]
             },
-            caixiang: {
+            {
+                id: "caixiang",
                 name: "蔡襄",
-                period: "北宋 (1012年-1067年)",
-                title: "跨海大桥建造的主持者",
-                desc: "北宋著名政治家、书法家。在任泉州太守期间，主持修建了洛阳桥。面对湍急的海潮，他创造性地采用了‘筏型基础’和‘种蛎固基’，是中国历史上第一位将生物学应用于大规模工程建设的先行者。",
-                achievement: ["主持修建万安桥", "首创‘种蛎固基’法", "开创筏型基础先河"]
+                period: "北宋",
+                title: "跨海大桥建造者",
+                img: "images/scientists/caixiang.png",
+                desc: "主持修建了洛阳桥，创造性地采用了‘筏型基础’和‘种蛎固基’，是中国历史上第一位将生物学应用于大规模工程的先行者。",
+                achievement: ["主持修建万安桥", "首创‘种蛎固基’法"]
             },
-            maoyisheng: {
+            {
+                id: "maoyisheng",
                 name: "茅以升",
-                period: "现代 (1896年-1989年)",
+                period: "现代",
                 title: "钱塘江大桥之父",
-                desc: "中国现代桥梁工程奠基人。他主持修建了中国第一座由中国人自己设计、建造的铁路公路两用大桥——钱塘江大桥，打破了‘钱塘江造桥是不可能的事’的断言，并在抗日战争期间亲手炸桥以阻敌。",
-                achievement: ["主持修建钱塘江大桥", "武汉长江大桥技术顾问", "撰写《中国古桥技术史》"]
+                img: "images/scientists/maoyisheng.png",
+                desc: "中国现代桥梁工程奠基人。主持修建了中国第一座自行设计的铁路公路两用大桥——钱塘江大桥。",
+                achievement: ["主持修建钱塘江大桥", "撰写《中国古桥技术史》"]
+            },
+            // --- 方便添加更多人 ---
+            {
+                id: "zhan tianyane", // 示例：詹天佑
+                name: "詹天佑",
+                period: "近代",
+                title: "中国铁路之父",
+                img: "images/scientists/zhantianyane.png",
+                desc: "虽然以铁路闻名，但在铁路建设中主持修建了多座复杂的铁路大桥，为中国近代桥梁工程积累了宝贵经验。",
+                achievement: ["主持京张铁路建设", "自力更生修筑大桥"]
             }
-        };
+        ];
 
-        function showScientist(id, element) {
-            // 1. 处理头像选中样式
+        // ================= 自动初始化逻辑 =================
+        function initScientists() {
+            const avatarContainer = document.getElementById('scientist-avatar-container');
+            if (!avatarContainer) return;
+
+            // 1. 清空容器并循环渲染头像
+            avatarContainer.innerHTML = allScientists.map(s => `
+        <div class="flex flex-col items-center group cursor-pointer" onclick="renderScientistDetail('${s.id}', this)">
+            <div class="scientist-avatar" id="avatar-${s.id}">
+                <img src="${s.img}" onerror="this.src='https://via.placeholder.com/150'" class="w-full h-full object-cover">
+            </div>
+            <span class="mt-4 font-bold text-lg text-dark group-hover:text-primary transition-colors">${s.name}</span>
+        </div>
+    `).join('');
+
+            // 2. 默认加载第一个人
+            if (allScientists.length > 0) {
+                setTimeout(() => {
+                    const firstGroup = avatarContainer.querySelector('.group');
+                    renderScientistDetail(allScientists[0].id, firstGroup);
+                }, 100);
+            }
+        }
+
+        // ================= 详情渲染函数 =================
+        function renderScientistDetail(id, element) {
+            // 切换头像高亮状态
             document.querySelectorAll('.scientist-avatar').forEach(av => av.classList.remove('active-avatar'));
             element.querySelector('.scientist-avatar').classList.add('active-avatar');
 
-            // 2. 获取数据并填充
-            const data = scientistData[id];
+            const data = allScientists.find(s => s.id === id);
             const contentBox = document.getElementById('scientist-content');
             const windowBox = document.getElementById('scientist-detail-window');
 
-            // 3. 核心修改：如果是第一次展示，移除透明度为0的类
             windowBox.classList.remove('opacity-0');
 
-            // 4. 触发切换动画（先淡出再淡入）
+            // 动画过渡
             contentBox.style.opacity = '0';
             contentBox.style.transform = 'translateY(10px)';
-            contentBox.style.transition = 'all 0.3s';
+            contentBox.style.transition = '0.3s'
 
             setTimeout(() => {
                 contentBox.innerHTML = `
@@ -836,9 +858,9 @@ section {
             </div>
             <div class="md:w-2/3 border-t md:border-t-0 md:border-l border-secondary/20 pt-8 md:pt-0 md:pl-8 text-left">
                 <p class="text-gray-600 leading-relaxed mb-6 text-lg">${data.desc}</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex flex-wrap gap-3">
                     ${data.achievement.map(item => `
-                        <div class="bg-[#FDFBF7] border border-secondary/10 p-3 rounded-lg text-xs font-bold text-primary flex items-center gap-2">
+                        <div class="bg-[#FDFBF7] border border-secondary/10 px-3 py-1.5 rounded-lg text-sm font-bold text-primary flex items-center gap-2 shadow-sm">
                             <span class="w-1.5 h-1.5 bg-primary rounded-full"></span> ${item}
                         </div>
                     `).join('')}
@@ -850,19 +872,8 @@ section {
             }, 300);
         }
 
-        // 页面加载完成后立即显示第一个人物，防止空白
-        window.addEventListener('DOMContentLoaded', () => {
-            // 默认点击第一个头像容器
-            const firstScientist = document.querySelector('#scientists .group');
-            if (firstScientist) {
-                showScientist('lichun', firstScientist);
-            }
-        });
-
-        // 初始化加载第一个人物
-        window.addEventListener('load', () => {
-            showScientist('lichun', document.querySelector('.group'));
-        });
+        // 替换原来的 window.addEventListener('load', ...) 里的初始化调用
+        window.addEventListener('load', initScientists);
         // 模拟数据：各朝代桥梁统计
         const dynastyData = {
             labels: ['隋', '唐', '宋', '元', '明', '清'],
