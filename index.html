@@ -198,12 +198,24 @@ html {
     background-size: cover;
     background-position: center;
 }
+#hero-bg-next {
+    /* 增加到 2.5s 的渐变时间，实现“慢动作”融合 */
+    transition: opacity 2.5s ease-in-out;
+}
+#hero-bg-current {
+    /* 底层不需要过渡动画，因为它只是作为背景垫底 */
+}
 /* 2. 解决吸顶导航遮挡：给所有 section 设置滚动边距 */
 /* 这里的 80px 应该略大于你导航栏的高度，这样跳转后标题下方会留出一些“呼吸感” */
 section {
     scroll-margin-top: 80px;
 }
-
+#hero-bg-layer {
+    /* 1.5秒的透明度渐变，比直接换图要丝滑得多 */
+    transition: opacity 1.5s ease-in-out;
+    background-size: cover;
+    background-position: center;
+}
 /* 针对“杰出科学家”版块，如果还是觉得不居中，可以单独调大偏移量 */
 #scientists {
     scroll-margin-top: 100px;
@@ -279,7 +291,9 @@ section {
     </header>
 
     <!-- 英雄区 -->
-    <section id="hero-section" class="bg-dark h-[60vh] relative overflow-hidden transition-all duration-1000">
+    <section id="hero-section" class="bg-dark h-[60vh] relative overflow-hidden">
+        <div id="hero-bg-current" class="absolute inset-0 bg-cover bg-center z-0"></div>
+        <div id="hero-bg-next" class="absolute inset-0 bg-cover bg-center z-0 opacity-0"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent z-10"></div>
         <div class="container mx-auto px-4 h-full flex items-center relative z-20">
             <div class="text-white max-w-2xl">
@@ -671,11 +685,13 @@ section {
             document.getElementById('mobileMenu').classList.toggle('hidden');
         });
         // ================= 背景图片自动轮播逻辑 =================
+        // ================= 彻底消除黑屏的背景轮播逻辑 =================
+        // ================= 双层叠影淡入淡出逻辑 =================
         function initHeroSlider() {
-            const hero = document.getElementById('hero-section');
-            if (!hero) return;
+            const bgCurrent = document.getElementById('hero-bg-current');
+            const bgNext = document.getElementById('hero-bg-next');
+            if (!bgCurrent || !bgNext) return;
 
-            // 1. 定义图片路径数组
             const bgImages = [
                 'images/cover/bg1.png',
                 'images/cover/bg2.png',
@@ -686,27 +702,50 @@ section {
 
             let currentIndex = 0;
 
-            // 2. 预加载图片（防止切换时出现短暂空白）
-            bgImages.forEach(src => {
-                const img = new Image();
-                img.src = src;
-            });
+            // 初始化显示第一张图
+            bgCurrent.style.backgroundImage = `url('${bgImages[0]}')`;
 
-            // 3. 切换背景的函数
             function changeBackground() {
-                // 应用下一张图片
-                hero.style.backgroundImage = `url('${bgImages[currentIndex]}')`;
-
-                // 计算下一个索引
+                // 1. 确定下一张图片的索引
                 currentIndex = (currentIndex + 1) % bgImages.length;
+                const nextSrc = bgImages[currentIndex];
+
+                // 2. 预加载新图
+                const tempImg = new Image();
+                tempImg.src = nextSrc;
+
+                tempImg.onload = function () {
+                    // A. 将新图赋给“顶层”
+                    bgNext.style.backgroundImage = `url('${nextSrc}')`;
+                    // B. 让顶层开始淡入（从透明到不透明）
+                    bgNext.classList.remove('opacity-0');
+                    bgNext.classList.add('opacity-100');
+
+                    // C. 等待渐变动画结束（2.5秒渐变，这里设 2.6秒）
+                    setTimeout(() => {
+                        // 将底层图片也换成这张新图（此时顶层挡着，用户看不见换图）
+                        bgCurrent.style.backgroundImage = `url('${nextSrc}')`;
+
+                        // 瞬间将顶层设为透明，为下一次切换做准备
+                        // 注意这里要移除 transition 否则会看到顶层消失的过程
+                        bgNext.style.transition = 'none';
+                        bgNext.classList.remove('opacity-100');
+                        bgNext.classList.add('opacity-0');
+
+                        // 强制重绘后恢复 transition
+                        bgNext.offsetHeight;
+                        bgNext.style.transition = 'opacity 2.5s ease-in-out';
+                    }, 2600);
+                };
             }
 
-            // 4. 初始化执行一次
-            changeBackground();
-
-            // 5. 设置定时器：每 6 秒切换一次 (1.5s 淡入淡出 + 4.5s 展示)
-            setInterval(changeBackground, 6000);
+            // 每 7 秒循环一次（2.5s渐变 + 4.5s静止展示）
+            setInterval(changeBackground, 7000);
         }
+
+        window.addEventListener('load', initHeroSlider);
+
+        window.addEventListener('load', initHeroSlider);
 
         // 在页面加载完成后启动
         window.addEventListener('load', initHeroSlider);
