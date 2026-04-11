@@ -655,7 +655,7 @@ section {
                 </div>
             </div>
             <div class="text-center border-t border-gray-700 pt-8">
-                <p>&copy; 2025 NWAFU×计算机设计大赛 版权所有</p>
+                <p>&copy; 2025 NWAFU×计算机设计大赛 设计作品</p>
             </div>
         </div>
     </footer>
@@ -1331,44 +1331,44 @@ section {
         // ================= 优化地图点击事件 =================
         // ================= 优化地图点击事件 (右侧面板联动) =================
         // ================= 优化地图点击事件：增加内容切换动画 =================
-bridgeMap.on('click', function (params) {
-    const province = params.name;
-    const bridges = provinceBridgesData[province] || [];
-    
-    const defaultPanel = document.getElementById('defaultRegionInfo');
-    const dynamicPanel = document.getElementById('provinceBridgesPanel');
+        bridgeMap.on('click', function (params) {
+            const province = params.name;
+            const bridges = provinceBridgesData[province] || [];
 
-    // 1. 如果是第一次从默认面板切换到省份面板
-    if (!defaultPanel.classList.contains('hidden')) {
-        dynamicPanel.classList.remove('hidden');
-        defaultPanel.style.opacity = '0';
-        defaultPanel.style.transform = 'translateX(-20px)';
-        
-        setTimeout(() => {
-            defaultPanel.classList.add('hidden');
-            renderProvinceContent(dynamicPanel, province, bridges);
-            dynamicPanel.style.transform = 'translateX(0)';
-        }, 300);
-    } else {
-        // 2. 核心改进：如果是省份之间互相切换，增加“闪烁”或“平滑过渡”
-        // 先让当前内容淡出
-        dynamicPanel.style.opacity = '0';
-        dynamicPanel.style.transform = 'translateY(10px)';
-        
-        setTimeout(() => {
-            // 在不可见状态下替换内容
-            renderProvinceContent(dynamicPanel, province, bridges);
-            
-            // 重新淡入
-            dynamicPanel.style.opacity = '1';
-            dynamicPanel.style.transform = 'translateY(0)';
-        }, 250); // 250ms 后替换内容
-    }
-});
+            const defaultPanel = document.getElementById('defaultRegionInfo');
+            const dynamicPanel = document.getElementById('provinceBridgesPanel');
 
-// 为了代码整洁，建议将渲染逻辑抽离成一个函数
-function renderProvinceContent(panel, province, bridges) {
-    panel.innerHTML = `
+            // 1. 如果是第一次从默认面板切换到省份面板
+            if (!defaultPanel.classList.contains('hidden')) {
+                dynamicPanel.classList.remove('hidden');
+                defaultPanel.style.opacity = '0';
+                defaultPanel.style.transform = 'translateX(-20px)';
+
+                setTimeout(() => {
+                    defaultPanel.classList.add('hidden');
+                    renderProvinceContent(dynamicPanel, province, bridges);
+                    dynamicPanel.style.transform = 'translateX(0)';
+                }, 300);
+            } else {
+                // 2. 核心改进：如果是省份之间互相切换，增加“闪烁”或“平滑过渡”
+                // 先让当前内容淡出
+                dynamicPanel.style.opacity = '0';
+                dynamicPanel.style.transform = 'translateY(10px)';
+
+                setTimeout(() => {
+                    // 在不可见状态下替换内容
+                    renderProvinceContent(dynamicPanel, province, bridges);
+
+                    // 重新淡入
+                    dynamicPanel.style.opacity = '1';
+                    dynamicPanel.style.transform = 'translateY(0)';
+                }, 250); // 250ms 后替换内容
+            }
+        });
+
+        // 为了代码整洁，建议将渲染逻辑抽离成一个函数
+        function renderProvinceContent(panel, province, bridges) {
+            panel.innerHTML = `
         <div class="flex justify-between items-center mb-4 border-b-2 border-primary/20 pb-3">
             <h3 class="text-2xl font-bold text-primary flex items-center gap-2">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
@@ -1381,72 +1381,72 @@ function renderProvinceContent(panel, province, bridges) {
         </div>
     `;
 
-    if (bridges.length === 0) {
-        panel.innerHTML += `
+            if (bridges.length === 0) {
+                panel.innerHTML += `
             <div class="flex-1 flex flex-col items-center justify-center text-gray-400">
                 <p>该地区名桥档案正在考证录入中</p>
             </div>
         `;
-    } else {
-        const listContainer = document.createElement('div');
-        listContainer.className = 'flex-1 overflow-y-auto hide-scrollbar space-y-4 pr-2 pb-4';
-        
-        bridges.forEach((bridge, index) => {
-            const card = document.createElement('div');
-            card.className = 'p-4 bg-secondary/10 border-l-4 border-primary rounded-r-lg hover:bg-secondary/20 transition-colors shadow-sm';
-            // 使用你的 fadeInUp 动画，并增加微小的延迟感
-            card.style.animation = `fadeInUp 0.4s ease-out ${index * 0.05}s forwards`;
-            card.style.opacity = '0';
-            card.innerHTML = `
+            } else {
+                const listContainer = document.createElement('div');
+                listContainer.className = 'flex-1 overflow-y-auto hide-scrollbar space-y-4 pr-2 pb-4';
+
+                bridges.forEach((bridge, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'p-4 bg-secondary/10 border-l-4 border-primary rounded-r-lg hover:bg-secondary/20 transition-colors shadow-sm';
+                    // 使用你的 fadeInUp 动画，并增加微小的延迟感
+                    card.style.animation = `fadeInUp 0.4s ease-out ${index * 0.05}s forwards`;
+                    card.style.opacity = '0';
+                    card.innerHTML = `
                 <div class="flex justify-between items-start mb-2">
                     <h4 class="text-lg font-bold text-dark">${bridge.name}</h4>
                     <span class="bg-white text-primary text-xs px-2 py-1 rounded border border-primary/20">${bridge.dynasty}</span>
                 </div>
                 <p class="text-sm text-gray-700 leading-relaxed">${bridge.desc}</p>
             `;
-            listContainer.appendChild(card);
-        });
-        panel.appendChild(listContainer);
-    }
+                    listContainer.appendChild(card);
+                });
+                panel.appendChild(listContainer);
+            }
 
-    // 重新绑定返回按钮事件（因为 innerHTML 被重置了）
-    // 重新绑定返回按钮事件（确保取消地图省份高亮和字样）
-    document.getElementById('closePanelBtn').onclick = function() {
-        const defaultPanel = document.getElementById('defaultRegionInfo');
-        const panel = document.getElementById('provinceBridgesPanel');
+            // 重新绑定返回按钮事件（因为 innerHTML 被重置了）
+            // 重新绑定返回按钮事件（确保取消地图省份高亮和字样）
+            document.getElementById('closePanelBtn').onclick = function () {
+                const defaultPanel = document.getElementById('defaultRegionInfo');
+                const panel = document.getElementById('provinceBridgesPanel');
 
-        // 1. 执行地图动作：精准取消刚才点击省份的高亮和选中状态
-        if (typeof bridgeMap !== 'undefined') {
-            // 取消高亮
-            bridgeMap.dispatchAction({
-                type: 'downplay',
-                seriesIndex: 0,
-                name: province // 使用闭包传进来的省份名
-            });
-            // 取消选中（彻底去除文字残留）
-            bridgeMap.dispatchAction({
-                type: 'unselect',
-                seriesIndex: 0,
-                name: province
-            });
-            // 隐藏提示框
-            bridgeMap.dispatchAction({
-                type: 'hideTip'
-            });
+                // 1. 执行地图动作：精准取消刚才点击省份的高亮和选中状态
+                if (typeof bridgeMap !== 'undefined') {
+                    // 取消高亮
+                    bridgeMap.dispatchAction({
+                        type: 'downplay',
+                        seriesIndex: 0,
+                        name: province // 使用闭包传进来的省份名
+                    });
+                    // 取消选中（彻底去除文字残留）
+                    bridgeMap.dispatchAction({
+                        type: 'unselect',
+                        seriesIndex: 0,
+                        name: province
+                    });
+                    // 隐藏提示框
+                    bridgeMap.dispatchAction({
+                        type: 'hideTip'
+                    });
+                }
+
+                // 2. 面板切换动画
+                panel.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    panel.classList.add('hidden');
+                    defaultPanel.classList.remove('hidden');
+                    setTimeout(() => {
+                        defaultPanel.style.opacity = '1';
+                        defaultPanel.style.transform = 'translateX(0)';
+                    }, 50);
+                }, 400);
+            };
         }
-
-        // 2. 面板切换动画
-        panel.style.transform = 'translateX(100%)';
-        setTimeout(() => {
-            panel.classList.add('hidden');
-            defaultPanel.classList.remove('hidden');
-            setTimeout(() => {
-                defaultPanel.style.opacity = '1';
-                defaultPanel.style.transform = 'translateX(0)';
-            }, 50);
-        }, 400);
-    };
-}
         // ================= 替换结束 =================
 
         // 显示桥梁详情弹窗
