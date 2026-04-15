@@ -236,32 +236,22 @@ section {
 
             <!-- 桌面端菜单：加入相对定位与 Group 动画 -->
             <nav class="hidden md:flex space-x-8">
-                <a href="#map" class="relative py-1 transition-all duration-300 hover:text-secondary group">
-                    分布地图
-                    <span
-                        class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="#dynasty" class="relative py-1 transition-all duration-300 hover:text-secondary group">
-                    朝代统计
-                    <span
-                        class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="#famous-bridges" class="relative py-1 transition-all duration-300 hover:text-secondary group">
-                    四大名桥
-                    <span
-                        class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <!-- 修正 ID：从 #scientist 改为 #scientists -->
-                <a href="#scientists" class="relative py-1 transition-all duration-300 hover:text-secondary group">
-                    杰出科学家
-                    <span
-                        class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="#book" class="relative py-1 transition-all duration-300 hover:text-secondary group">
-                    经典专著
-                    <span
-                        class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span>
-                </a>
+                <a href="#map" class="relative py-1 transition-all duration-300 hover:text-secondary group">分布地图<span
+                        class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+                <a href="#dynasty"
+                    class="relative py-1 transition-all duration-300 hover:text-secondary group">朝代统计<span
+                        class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+                <a href="#famous-bridges"
+                    class="relative py-1 transition-all duration-300 hover:text-secondary group">四大名桥<span
+                        class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+                <a href="#achievements"
+                    class="relative py-1 transition-all duration-300 hover:text-secondary group">桥梁成就<span
+                        class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+                <a href="#scientists"
+                    class="relative py-1 transition-all duration-300 hover:text-secondary group">杰出科学家<span
+                        class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
+                <a href="#book" class="relative py-1 transition-all duration-300 hover:text-secondary group">经典专著<span
+                        class="absolute left-0 bottom-0 w-0 h-0.5 bg-secondary transition-all duration-300 group-hover:w-full"></span></a>
             </nav>
 
             <!-- 移动端菜单按钮 -->
@@ -596,6 +586,87 @@ section {
             </div>
         </section>
 
+        <section id="achievements" class="mb-24">
+            <h2 class="section-title">营建奇迹：桥梁科学成就</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <div onclick="showAchieveFull('结构创新')" class="cursor-pointer bg-white rounded-2xl shadow-lg border border-secondary/20 flex flex-col relative group overflow-hidden h-[420px] transition-all hover:border-primary/50 hover:shadow-xl">
+                    <div class="h-32 bg-amber-50 flex items-center justify-center border-b border-secondary/10 group-hover:bg-amber-100 transition-colors">
+                        <span class="text-4xl">🏗️</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <h3 class="text-lg font-bold text-dark mb-4">结构创新与力学应用</h3>
+                        <div class="text-sm text-gray-600 line-clamp-6 leading-relaxed">
+                            <p><strong>贯木拱（虹桥）结构：</strong>采用纵横木材互锁，无需桥墩即可跨越。
+                                <strong>悬链线拱：</strong>拱轴线与受力形态惊人吻合。</p>
+                        </div>
+                        <div class="mt-auto text-primary font-bold text-base flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            点击深入探索 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div onclick="showAchieveFull('基础处理')" class="cursor-pointer bg-white rounded-2xl shadow-lg border border-secondary/20 flex flex-col relative group overflow-hidden h-[420px] transition-all hover:border-primary/50 hover:shadow-xl">
+                    <div class="h-32 bg-emerald-50 flex items-center justify-center border-b border-secondary/10 group-hover:bg-emerald-100 transition-colors">
+                        <span class="text-4xl">🌊</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <h3 class="text-lg font-bold text-dark mb-4">生态工程与基础处理</h3>
+                        <div class="text-sm text-gray-600 line-clamp-6 leading-relaxed">
+                            <p><strong>“种蛎固基”法：</strong>利用牡蛎钙化作用胶结桥基。<strong>“睡木沉基”法：</strong>在软土地基铺设木筏支撑巨量负重。</p>
+                        </div>
+                        <div class="mt-auto text-primary font-bold text-base flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            点击深入探索 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div onclick="showAchieveFull('材料施工')" class="cursor-pointer bg-white rounded-2xl shadow-lg border border-secondary/20 flex flex-col relative group overflow-hidden h-[420px] transition-all hover:border-primary/50 hover:shadow-xl">
+                    <div class="h-32 bg-blue-50 flex items-center justify-center border-b border-secondary/10 group-hover:bg-blue-100 transition-colors">
+                        <span class="text-4xl">🛠️</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <h3 class="text-lg font-bold text-dark mb-4">材料科学与施工技术</h3>
+                        <div class="text-sm text-gray-600 line-clamp-6 leading-relaxed">
+                            <p><strong>悬索桥演进：</strong>攻克金属冶炼与岩石锚固难题。<strong>趁潮架梁法：</strong>利用大潮浮力运送巨型石梁。</p>
+                        </div>
+                        <div class="mt-auto text-primary font-bold text-base flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            点击深入探索 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div onclick="showAchieveFull('水文组织')" class="cursor-pointer bg-white rounded-2xl shadow-lg border border-secondary/20 flex flex-col relative group overflow-hidden h-[420px] transition-all hover:border-primary/50 hover:shadow-xl">
+                    <div class="h-32 bg-purple-50 flex items-center justify-center border-b border-secondary/10 group-hover:bg-purple-100 transition-colors">
+                        <span class="text-4xl">📏</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <h3 class="text-lg font-bold text-dark mb-4">水文勘测与施工组织</h3>
+                        <div class="text-sm text-gray-600 line-clamp-6 leading-relaxed">
+                            <p><strong>水文规律利用：</strong>掌握枯水期与潮汐规律。<strong>大型工程组织：</strong>展现了高效项目管理与跨区域协作。</p>
+                        </div>
+                        <div class="mt-auto text-primary font-bold text-base flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            点击深入探索 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <div id="achieveModal" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-dark/60 backdrop-blur-sm" onclick="closeAchieveModal()"></div>
+            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl relative z-10 overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="achieveModalContent">
+                <div class="p-8 max-h-[80vh] overflow-y-auto">
+                    <h2 id="modalTitle" class="text-3xl font-bold text-primary mb-6 border-b border-secondary/20 pb-4"></h2>
+                    <div id="modalBody" class="prose prose-stone max-w-none text-gray-700 leading-relaxed space-y-4"></div>
+                </div>
+                <button onclick="closeAchieveModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-primary transition-colors">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+        </div>
         <!-- 5. 古代桥梁专著 -->
         <section id="book" class="mb-16">
             <h2 class="section-title">古代桥梁专著</h2>
@@ -635,7 +706,8 @@ section {
                     </div>
                     <h3 class="text-xl font-bold mb-2">《玉海》</h3>
                     <p class="text-gray-600 mb-2">王应麟 (南宋)</p>
-                    <p class="text-gray-700 mb-4">体量庞大的类书。在“宫室”门下设“桥梁”专节，系统摘录《史记》《水经注》等文献，详细辑录了秦汉“渭水三桥”等古桥沿革，堪称“纸上桥梁博物馆”。</p>
+                    <p class="text-gray-700 mb-4">
+                        体量庞大的类书。在“宫室”门下设“桥梁”专节，系统摘录《史记》《水经注》等文献，详细辑录了秦汉“渭水三桥”等古桥沿革，堪称“纸上桥梁博物馆”。</p>
                     <button class="text-primary font-semibold hover:underline" onclick="showBookDetail('玉海')">查看详情
                         →</button>
                 </div>
@@ -1262,8 +1334,70 @@ section {
 
         // 初始化中国地图
         const bridgeMap = echarts.init(document.getElementById('bridgeMap'));
-        // 模拟省份桥梁数据
-        // ================= 新增：各省代表性古桥详细数据档案 =================
+        // ================= 桥梁成就详情数据 (完全还原 Word) =================
+        const achieveData = {
+            '结构创新': {
+                title: '桥梁结构创新与力学应用',
+                content: `
+            <p><strong>1. 贯木拱（虹桥）结构：</strong>《清明上河图》所画汴河虹桥是其巅峰之作。这种结构不设桥墩，完全依靠纵横相间的木材以简单的木楔与榫卯实现咬合。这种设计巧妙地解决了在此过程中需要飞跃大河、调控水位的技术难题，让大帆船能够顺利通过。</p>
+            <p><strong>2. 悬链线拱的直觉把握：</strong>古石匠虽然不懂现代高等数学，但凭经验使拱轴线与最合理的受力形态——悬链线惊人吻合。这使得桥梁在自重与载荷作用下，内部只受压力，极大地提升了稳定性。</p>
+            <p><strong>3. 推力平衡技术：</strong>以泉州安平桥为例，工匠们通过在长达五里的石梁桥中巧妙加减桥墩厚度，来平衡不等跨拱券产生的巨大水平推力，体现了朴素而精准的力学平衡感。</p>
+        `
+            },
+            '基础处理': {
+                title: '生态工程与基础处理',
+                content: `
+            <p><strong>1. “种蛎固基”法：</strong>洛阳桥首创的技术。在石条地基上人工养殖牡蛎，利用其壳体的钙化胶结作用，将散乱的石块“焊”成一个坚固的整体。这是人类工程学与生物学结合的早期奇迹。</p>
+            <p><strong>2. “睡木沉基”法：</strong>针对江南水网的软土地基，工匠们先排铺交叉的木筏，在其上垒石砌墩。由于木材在水下几乎不腐烂，这种柔性基础能极好地承载石桥重量，防止由于地基不均导致的塌陷。</p>
+            <p><strong>3. 分水尖与“龙舌嘴”：</strong>在桥墩前端设置尖形或船形的导流墙，并在下方修筑石砌基座，能够有效切割急流、分散洪水对桥墩的侧向冲击力，保障桥梁在汛期的安全。</p>
+        `
+            },
+            '材料施工': {
+                title: '材料科学与施工技术',
+                content: `
+            <p><strong>1. 悬索桥的演进：</strong>中国是悬索桥的发源地。从李冰时期的竹索桥到隋唐的藤桥，再到明清时期的重型铁链桥（如泸定桥），攻克了金属冶炼与岩石锚固的力学难题。</p>
+            <p><strong>2. 趁潮架梁法：</strong>以江东桥为例，重达200吨的巨型石梁无法靠人力抬升。古代工程师利用大潮时的浮力将石梁运至墩顶，随退潮自然落下，精准控制了自然伟力。</p>
+            <p><strong>3. 建筑材料的跨代应用：</strong>石拱桥中广泛使用“腰铁”和“铁拉杆”来增强石块间的拉力。这种刚柔并济的用材理念，极大地延长了中国古桥的使用寿命，使其历经千年不倒。</p>
+        `
+            },
+            '水文组织': {
+                title: '水文勘测与施工组织智慧',
+                content: `
+            <p><strong>1. 水文规律的深刻洞察：</strong>中国古代工匠在建桥前，会进行长期的水文观测。他们深谙河流的“性情”，选择在枯水期进行基础施工，利用河床裸露的契机修筑围堰，极大地降低了施工难度。</p>
+            <p><strong>2. 潮汐动力的精准利用：</strong>在沿海地区（如洛阳桥、江东桥），工匠们利用“朔望大潮”的浮力规律。通过测算潮位高度，将沉重的石梁运抵墩顶，实现了人与自然的完美配合。</p>
+            <p><strong>3. 严密的工程组织体系：</strong>大型古桥的营建通常跨越数年甚至数十年，涉及采石、造船、铁件铸造、劳动力调配等复杂环节。这反映了古代中国在大型基础设施建设中，具备极高的项目管理、质量控制与后勤保障能力。</p>
+            <p><strong>4. 洪水预警与标识系统：</strong>在许多古桥墩台或岸边设有“水尺”或雕刻神兽作为水位标记。这不仅是工程参考，更成为了流域内早期的水文监测与洪水预警节点。</p>
+        `
+            }
+        };
+
+        function showAchieveFull(type) {
+            const data = achieveData[type];
+            const modal = document.getElementById('achieveModal');
+            const content = document.getElementById('achieveModalContent');
+
+            document.getElementById('modalTitle').innerText = data.title;
+            document.getElementById('modalBody').innerHTML = data.content;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            document.body.style.overflow = 'hidden'; // 禁用背景滚动
+        }
+
+        function closeAchieveModal() {
+            const modal = document.getElementById('achieveModal');
+            const content = document.getElementById('achieveModalContent');
+
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+            document.body.style.overflow = 'auto';
+        }
         const provinceBridgesData = {
             '北京市': [
                 { name: '卢沟桥', type: '石拱桥', dynasty: '金代', desc: '华北最古老的十一孔联拱石桥，柱头雕刻有形态各异的石狮。' },
@@ -1752,12 +1886,6 @@ section {
                     desc: '中国古代最为全面、系统的综合性地理著作。',
                     content: '全书不仅以水系为纲，更在其中详细记录了跨越河流的著名古桥（如早期黄河浮桥、渭水桥等）的样貌及兴废经过。',
                     value: '考证早期桥梁水文环境的绝佳史料。'
-                },
-                '玉海': {
-                    author: '王应麟 (南宋)',
-                    desc: '体量庞大的类书。',
-                    content: '在“宫室”门下设“桥梁”专节，系统摘录《史记》《水经注》等文献，详细辑录了秦汉“渭水三桥”等古桥沿革，堪称“纸上桥梁博物馆”。',
-                    value: '研究古代桥梁历史的重要文献。'
                 }
             };
 
