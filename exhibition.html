@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D数字展厅 - 中国古代桥梁文化博物馆</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#8B4513', secondary: '#D2B48C', dark: '#1A110D' },
+                    fontFamily: { chinese: ['"Noto Serif SC"', 'serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        model-viewer {
+            width: 100%; height: 100%;
+            --poster-color: transparent;
+            background-color: #1A110D;
+        }
+        .active-thumb { border: 2px solid #D2B48C; transform: scale(1.05); }
+    </style>
+    <link href="https://gs.jurieo.com/gemini/fonts-googleapis/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-dark font-chinese text-secondary h-screen flex flex-col overflow-hidden">
+    <header class="bg-black/30 border-b border-secondary/10 p-4 shrink-0">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2 text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                <span class="font-bold tracking-widest">返回主殿</span>
+            </a>
+            <h1 class="text-xl font-bold text-secondary">3D数字名桥展厅</h1>
+            <div class="text-xs text-secondary/40">DIGITAL EXHIBITION HALL</div>
+        </div>
+    </header>
+
+    <main class="flex-1 flex flex-col md:flex-row overflow-hidden">
+        <section class="flex-1 relative bg-black/50">
+            <model-viewer id="bridgeViewer"
+                src="models/zhaozhou.glb" 
+                alt="中国古桥3D模型"
+                auto-rotate camera-controls 
+                shadow-intensity="1"
+                environment-image="neutral"
+                exposure="1.2">
+                <div slot="poster" class="flex items-center justify-center h-full text-secondary/50">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-secondary mx-auto mb-4"></div>
+                        <p>正在唤醒千年古物...</p>
+                    </div>
+                </div>
+            </model-viewer>
+            <div class="absolute bottom-8 left-8 z-10 pointer-events-none">
+                <h2 id="bridgeName" class="text-4xl md:text-6xl font-bold text-white mb-2 tracking-tighter">赵州桥</h2>
+                <p id="bridgeTag" class="text-xl text-secondary/80 italic">世界敞肩石拱桥之祖</p>
+            </div>
+        </section>
+
+        <aside class="w-full md:w-80 lg:w-96 bg-dark border-l border-secondary/10 p-6 overflow-y-auto flex flex-col gap-8">
+            <div>
+                <h3 class="text-xs tracking-widest text-secondary/50 mb-4 uppercase">Select Exhibits</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="switchModel('zhaozhou', '赵州桥', '世界敞肩石拱桥之祖')" class="group relative aspect-video bg-black rounded-lg overflow-hidden border border-secondary/10 hover:border-secondary transition-all active-thumb" id="btn-zhaozhou">
+                        <img src="images/famous_bridges/zhaozhou_1.png" class="w-full h-full object-cover opacity-50 group-hover:opacity-100 transition-opacity">
+                        <span class="absolute bottom-1 left-2 text-[10px] text-white">隋 · 赵州桥</span>
+                    </button>
+                    <button onclick="switchModel('luoyang', '洛阳桥', '海内第一桥')" class="group relative aspect-video bg-black rounded-lg overflow-hidden border border-secondary/10 hover:border-secondary transition-all" id="btn-luoyang">
+                        <img src="images/famous_bridges/luoyang_1.png" class="w-full h-full object-cover opacity-50 group-hover:opacity-100 transition-opacity">
+                        <span class="absolute bottom-1 left-2 text-[10px] text-white">宋 · 洛阳桥</span>
+                    </button>
+                    <button onclick="switchModel('guangji', '广济桥', '十八梭船廿四洲')" class="group relative aspect-video bg-black rounded-lg overflow-hidden border border-secondary/10 hover:border-secondary transition-all" id="btn-guangji">
+                        <img src="images/famous_bridges/guangji_1.png" class="w-full h-full object-cover opacity-50 group-hover:opacity-100 transition-opacity">
+                        <span class="absolute bottom-1 left-2 text-[10px] text-white">宋 · 广济桥</span>
+                    </button>
+                    <button onclick="switchModel('lugou', '卢沟桥', '卢沟晓月 联拱奇迹')" class="group relative aspect-video bg-black rounded-lg overflow-hidden border border-secondary/10 hover:border-secondary transition-all" id="btn-lugou">
+                        <img src="images/famous_bridges/lugou_1.png" class="w-full h-full object-cover opacity-50 group-hover:opacity-100 transition-opacity">
+                        <span class="absolute bottom-1 left-2 text-[10px] text-white">金 · 卢沟桥</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex-1">
+                <h3 class="text-xs tracking-widest text-secondary/50 mb-4 uppercase">Archive Details</h3>
+                <div class="bg-secondary/5 p-4 rounded-xl border border-secondary/10 space-y-4 text-sm leading-relaxed">
+                    <p id="bridgeDetail">正在调取古籍档案...</p>
+                    <div class="pt-4 border-t border-secondary/10 flex justify-between">
+                        <button class="bg-secondary text-dark px-4 py-2 rounded-full font-bold text-xs" onclick="alert('即将启动AR相机...')">手机AR查看</button>
+                        <button class="border border-secondary/50 px-4 py-2 rounded-full text-xs" onclick="document.getElementById('bridgeViewer').cameraOrbit = '0deg 75deg 10m'">重置视角</button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        const details = {
+            zhaozhou: "李春首创“敞肩拱”，主拱之上另设四个小拱，既节省石料又极大增强泄洪能力。模型展示了并列砌筑的28道独立拱券。",
+            luoyang: "首创“筏形基础”与“种蛎固基”。您可以观察其船形桥墩设计，牡蛎外壳的胶结让石块浑然一体。",
+            guangji: "世界首座启闭式浮桥。模型中可重点观察中间浮动部分与两端石墩桥梁的连接方式。",
+            lugou: "金代联拱石桥。模型精确还原了桥柱上数以百计、神态各异的石狮子及分水尖设计。"
+        };
+
+        function switchModel(modelName, label, tagline) {
+            const viewer = document.getElementById('bridgeViewer');
+            const nameEl = document.getElementById('bridgeName');
+            const tagEl = document.getElementById('bridgeTag');
+            const detailEl = document.getElementById('bridgeDetail');
+
+            // 1. 更新模型路径 (假设您的文件名叫 zhaozhou.glb 等)
+            viewer.src = `models/${modelName}.glb`;
+            
+            // 2. 更新文本
+            nameEl.textContent = label;
+            tagEl.textContent = tagline;
+            detailEl.textContent = details[modelName];
+
+            // 3. 更新按钮样式
+            document.querySelectorAll('button').forEach(btn => btn.classList.remove('active-thumb'));
+            document.getElementById(`btn-${modelName}`).classList.add('active-thumb');
+        }
+
+        // 默认加载
+        window.onload = () => switchContent('zhaozhou', '赵州桥', '世界敞肩石拱桥之祖');
+    </script>
+</body>
+</html>
