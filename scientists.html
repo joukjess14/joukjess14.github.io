@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>先贤档案馆 - 中国古代桥梁文化博物馆</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8B4513',   // 古铜色主色调
+                        secondary: '#D2B48C', // 浅木色辅助色
+                        dark: '#2C1810',      // 深棕色文字
+                    },
+                    fontFamily: {
+                        chinese: ['"Noto Serif SC"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+            .hide-scrollbar::-webkit-scrollbar { display: none; }
+            
+            /* 索引菜单激活状态 */
+            .menu-item {
+                @apply relative pl-4 py-3 cursor-pointer text-gray-500 transition-all duration-300 hover:text-primary hover:bg-primary/5 hover:pl-6 border-l-4 border-transparent;
+            }
+            .menu-item.active {
+                @apply text-primary border-primary pl-6 font-bold bg-primary/10;
+            }
+
+            /* 右侧内容淡入动画 */
+            .fade-in-content {
+                animation: softFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            }
+            @keyframes softFadeIn {
+                0% { opacity: 0; transform: translateX(20px); }
+                100% { opacity: 1; transform: translateX(0); }
+            }
+        }
+    </style>
+    <link rel="preconnect" href="https://gs.jurieo.com/gemini/fonts-googleapis">
+    <link rel="preconnect" href="https://gs.jurieo.com/gemini/fonts-gstatic" crossorigin>
+    <link href="https://gs.jurieo.com/gemini/fonts-googleapis/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-[#F5F5DC] font-chinese text-dark h-screen flex flex-col overflow-hidden">
+    
+    <header class="sticky top-0 z-50 bg-gradient-to-r from-[#A85C32] to-primary text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <svg class="w-6 h-6 transform transition-transform group-hover:-translate-x-1" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                <h1 class="text-2xl font-bold tracking-wider">中国古代桥梁文化博物馆 <span
+                        class="text-sm font-normal text-white/80 ml-2 border-l border-white/40 pl-2 tracking-normal">先贤档案馆</span></h1>
+            </a>
+            <nav class="hidden md:flex space-x-6">
+                <a href="index.html" class="hover:text-secondary transition-colors font-bold">返回主页</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+        <div class="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/20 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <aside class="w-full md:w-1/4 lg:w-1/5 bg-[#FAF8F5] border-r border-secondary/30 flex flex-col shrink-0 z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+            <div class="p-6 pb-2 hidden md:block">
+                <p class="text-xs tracking-[0.2em] text-primary/50 mb-1 font-bold">ARCHIVE INDEX</p>
+                <h2 class="text-2xl font-bold text-dark border-l-4 border-primary pl-3">千古匠心</h2>
+            </div>
+            
+            <div class="flex-1 overflow-x-auto md:overflow-y-auto hide-scrollbar">
+                <ul id="archive-menu" class="flex md:flex-col p-4 md:p-0 md:pt-4 md:pb-12 gap-2 md:gap-0">
+                    </ul>
+            </div>
+        </aside>
+
+        <section class="flex-1 overflow-y-auto hide-scrollbar relative">
+            <div id="archive-content" class="min-h-full p-6 md:p-12 lg:p-16 max-w-5xl mx-auto opacity-0">
+                </div>
+        </section>
+    </main>
+
+    <script>
+        // 核心数据
+        const archiveData = [
+            { id: "lichun", name: "李春", period: "隋代", title: "敞肩石拱桥的首创者", img: "images/scientists/lichun.png", 
+              bio: "隋代造桥匠师，现今河北邢台临城（一说隆尧）人士。关于李春及其杰作，最权威的史料出自唐代中书令张嘉贞所著的《安济桥铭》。他是中国乃至世界建筑史上第一位留下名字的桥梁专家。", 
+              tech: "<strong>1. 敞肩拱设计：</strong>在主拱两端各设两个小拱，不仅减轻了桥身自重，还极大地增强了泄洪能力，理念比欧洲早1200多年。<br/><br/><strong>2. 并列砌筑与铁拉杆：</strong>将主拱券分为28道独立拱券，并在相邻拱石间嵌入燕尾形铁榫使其紧密咬合，增强整体抗震能力。", 
+              works: "<strong>赵州桥（安济桥）</strong>：全长64.4米，宽9米，拱高7.23米。是世界上现存年代最久远、跨度最大的单孔敞肩圆弧石拱桥。" 
+            },
+            { id: "weiji", name: "韦机", period: "唐代", title: "龟背桥基的发明者", img: "images/scientists/weiji.png", 
+              bio: "又名韦弘机，雍州万年（今陕西西安市）人，出身关中望族京兆韦氏。唐代杰出的工程水利专家。", 
+              tech: "发现原有的方形桥墩容易被洪水冲毁，创造性地将桥墩迎水面设计成尖形（即“龟背状”）。这一设计能有效分流水流、减小冲击力，是中国古代桥梁抗冲击设计的重大创新。", 
+              works: "一生最大的工程贡献是在唐高宗上元年间主持移建洛阳中桥，并在武则天时期重建天津桥。" 
+            },
+            { id: "luxi", name: "卢锡", period: "北宋", title: "跨海石桥的技术先驱", img: "images/scientists/luxi.png", 
+              bio: "北宋处士。在僧宗善、郡人王实等人的倡议，以及外甥蔡襄的帮助下，着手筹建并主持了古代罕见的跨海大桥的建造。", 
+              tech: "<strong>1. 筏形基础法：</strong>向江底抛掷巨石形成水下石堤作为稳固桥基。<br/><br/><strong>2. 种蛎固基法：</strong>在桥基上人工养殖牡蛎，利用牡蛎胶结石块，是世界首创将生物学应用于桥梁工程。<br/><br/><strong>3. 浮运架梁法：</strong>利用潮汐涨落的自然力量来架设几十吨重的巨型石板。", 
+              works: "<strong>洛阳桥（万安桥）</strong>：始建于北宋皇祐五年（公元1053年）。是中国第一座跨海梁式大石桥。" 
+            },
+            { id: "lijie", name: "李诫", period: "北宋", title: "建筑标准的奠基者", img: "images/scientists/lijie.png", 
+              bio: "字明仲，北宋郑州管城人，出身官宦世家。主管北宋的宫室、桥梁等皇家工程的修建，学识极为渊博。", 
+              tech: "通过编修官方书籍，统一了古代建筑术语，规范了13个工种的选料与设计施工标准。特别是在桥梁工程中详尽制定了“壕寨”（基础工程）技术规范，标志着中国古代建筑技术走向标准化。", 
+              works: "<strong>《营造法式》</strong>：不仅是宋代官方建筑的重要法典，也是中国古代最全面、最科学的建筑工程技术专著。" 
+            },
+            { id: "huaibing", name: "怀丙", period: "北宋", title: "力学与工程奇才", img: "images/scientists/huaibing.png", 
+              bio: "北宋名僧，极具天赋的工程奇才。他不守常规，深谙物理与力学在实际宏大工程中的巧妙应用。", 
+              tech: "<strong>1. 灌铁法修复石桥：</strong>赵州桥倾斜时，在损坏部位凿孔浇铸熔化的铁水，形成新的铁质框架，实现了“不役众工，以术正之”。<br/><br/><strong>2. 浮力打捞铁牛：</strong>利用两艘装满泥土的大船架设杠杆，将泥土卸去后利用船只巨大的上浮力，成功将数万斤的沉河铁牛拔出淤泥。", 
+              works: "成功修复倾斜的千年古桥赵州桥；成功打捞蒲津桥八尊沉河巨型铁牛。" 
+            },
+            { id: "guoshoujing", name: "郭守敬", period: "元代", title: "桥闸合一的缔造者", img: "images/scientists/guoshoujing.png", 
+              bio: "字若思，顺德邢台人。元代最杰出的科学家之一，精通天文、水利、仪器制造，历任提举诸路河渠、都水少监等职。", 
+              tech: "凭借宏大的水利规划能力，创立了“桥闸合一”的体系。在桥旁设置水闸，船来则提闸放水行船，无船则闭闸以保持积水潭水位，堪称完美的古代“船闸管理系统”。", 
+              works: "<strong>万宁桥</strong>：至元二十九年（1292年）改建为石桥，打通了京杭大运河的最后一公里。历经七百余年至今仍承载着北京交通。" 
+            },
+            { id: "zhaozuoji", name: "赵作基", period: "清代", title: "精通算术的造桥大师", img: "images/scientists/zhaozuoji.png", 
+              bio: "字守成，浙江缙云壶镇人，清代国学生。以“才识敏捷，尤善算术”闻名于世，是一位罕见的将数学精确计算应用于工程的实践者。", 
+              tech: "石拱桥建造需要大量异形拱石（辏石）。他精于运用“勾股定理”，精确计算并绘制出每一块辏石的斜角、尺寸。工匠严格按图雕凿，最终“举而合之，丝毫无差”。", 
+              works: "作为总设计师与施工负责人，主持建造了缙云县三大古桥：贤母桥、继义桥和竞爽桥。" 
+            },
+            { id: "wuming", name: "佚名匠人", period: "贯穿古今", title: "华夏桥梁的真正脊梁", img: "images/scientists/wuming.png", 
+              bio: "中国古代桥梁的辉煌成就，绝大多数出自千千万万无名工匠之手。他们不识字、无俸禄，更没有留下任何理论著作。", 
+              tech: "他们的智慧不存于纸张，而是通过口传身授，在脚手架与风雨泥泞中一代代传承、改进、升华。从木桥到石拱，从牡蛎固基到不施一钉的贯木拱桥，无不凝结着底层人民的心血。", 
+              works: "神州大地上数以万计的古桥。他们用粗糙的双手缔造了令现代工程师叹为观止的奇迹，支撑起了几千年的文明交通。" 
+            }
+        ];
+
+        // 默认浅色占位图
+        const fallbackImg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150'%3E%3Crect width='150' height='150' fill='%23E5E5E5'/%3E%3Cpath d='M75 45a15 15 0 1 0 0 30 15 15 0 0 0 0-30zm0 40c-20 0-35 15-35 25v5h70v-5c0-10-15-25-35-25z' fill='%23999999'/%3E%3C/svg%3E";
+
+        // 初始化页面
+        function initArchive() {
+            const menuContainer = document.getElementById('archive-menu');
+            
+            // 生成左侧菜单
+            menuContainer.innerHTML = archiveData.map((data, index) => `
+                <li id="menu-${data.id}" class="menu-item shrink-0 whitespace-nowrap md:whitespace-normal" onclick="switchContent('${data.id}')">
+                    <span class="text-xs text-primary/60 mr-2 md:block md:mb-1 font-bold">${data.period}</span>
+                    <span class="text-lg md:text-xl tracking-widest text-dark">${data.name}</span>
+                </li>
+            `).join('');
+
+            // 默认展示第一位
+            if (archiveData.length > 0) {
+                switchContent(archiveData[0].id);
+            }
+        }
+
+        // 切换右侧内容
+        function switchContent(id) {
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(`menu-${id}`).classList.add('active');
+
+            const data = archiveData.find(s => s.id === id);
+            const contentBox = document.getElementById('archive-content');
+
+            contentBox.classList.remove('fade-in-content');
+            contentBox.style.opacity = '0';
+
+            setTimeout(() => {
+                contentBox.innerHTML = `
+                    <div class="flex flex-col md:flex-row items-center md:items-end gap-8 border-b-2 border-secondary/20 pb-10 mb-10">
+                        <div class="w-32 h-32 md:w-40 md:h-40 shrink-0 rounded-full overflow-hidden border-4 border-white shadow-xl relative group">
+                            <img src="${data.img}" onerror="this.src='${fallbackImg}'" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        </div>
+                        <div class="text-center md:text-left">
+                            <span class="inline-block bg-primary/10 text-primary font-bold px-3 py-1 rounded-full text-xs tracking-widest mb-4">${data.period}</span>
+                            <h2 class="text-4xl md:text-6xl font-bold text-dark mb-4 tracking-wider">${data.name}</h2>
+                            <p class="text-xl text-gray-600 italic">${data.title}</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        <div class="lg:col-span-5 relative">
+                            <h4 class="text-2xl font-bold text-dark mb-6 flex items-center gap-2">
+                                <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                生平纵览
+                            </h4>
+                            <p class="text-gray-700 leading-loose text-lg text-justify">${data.bio}</p>
+                        </div>
+
+                        <div class="lg:col-span-7 flex flex-col gap-6">
+                            
+                            <div class="bg-white p-8 rounded-2xl shadow-sm border border-secondary/20 hover:shadow-md transition-shadow">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                                    </div>
+                                    <h4 class="text-xl font-bold text-dark">技术创举</h4>
+                                </div>
+                                <div class="text-gray-700 leading-relaxed text-lg">${data.tech}</div>
+                            </div>
+
+                            <div class="bg-white p-8 rounded-2xl shadow-sm border border-secondary/20 hover:shadow-md transition-shadow">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="p-2 bg-orange-50 rounded-lg text-primary">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                                    </div>
+                                    <h4 class="text-xl font-bold text-dark">代表作与影响</h4>
+                                </div>
+                                <div class="text-gray-700 leading-relaxed text-lg">${data.works}</div>
+                            </div>
+
+                        </div>
+                    </div>
+                `;
+                contentBox.classList.add('fade-in-content');
+            }, 50);
+        }
+
+        initArchive();
+    </script>
+</body>
+</html>
