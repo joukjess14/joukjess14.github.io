@@ -9,8 +9,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- ECharts 图表库 -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-    <!-- 中国地图GeoJSON数据（离线可用） -->
-    <script src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
     <!-- 自定义配置 -->
     <script>
         tailwind.config = {
@@ -327,7 +325,19 @@ section {
                     <div class="p-2 bg-secondary/30 rounded-xl shadow-2xl border border-secondary/50 h-full">
                         <div
                             class="p-1 bg-[#FAF8F5] rounded-lg border-2 border-dashed border-secondary h-full relative">
-                            <div id="bridgeMap" class="w-full h-[500px] md:h-[600px] rounded-lg"></div>
+                            <div class="relative">
+                                <div id="bridgeMap" style="height: 600px;"></div>
+
+                                <a href="http://datav.aliyun.com/portal/school/atlas/area_selector" target="_blank"
+                                    class="absolute right-5 bottom-8 z-[100] text-right transition-all hover:scale-105 p-2 block"
+                                    title="点击跳转至阿里云 DataV 查看底图来源">
+                                    <p
+                                        class="text-[11px] font-bold text-primary opacity-70 leading-relaxed font-chinese">
+                                        底图来源：阿里云 DataV GeoAtlas<br>
+                                        审图号：GS(2025)5996号 (查看授权)
+                                    </p>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -416,104 +426,153 @@ section {
         </section>
 
         <!-- 3. 四大名桥 -->
-       <section id="famous-bridges" class="mb-16">
+        <section id="famous-bridges" class="mb-16">
             <h2 class="section-title">中国四大名桥</h2>
-            
+
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    
+
                     <div class="relative h-64 rounded-2xl overflow-hidden group cursor-pointer shadow-lg">
-                        <img src="images/famous_bridges/zhaozhou_1.png" onerror="this.src='https://via.placeholder.com/600x400?text=赵州桥'" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-500 group-hover:opacity-0"></div>
-                        <div class="absolute bottom-0 left-0 right-0 p-6 transition-all duration-500 group-hover:translate-y-4 group-hover:opacity-0">
+                        <img src="images/famous_bridges/zhaozhou_1.png"
+                            onerror="this.src='https://via.placeholder.com/600x400?text=赵州桥'"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-500 group-hover:opacity-0">
+                        </div>
+                        <div
+                            class="absolute bottom-0 left-0 right-0 p-6 transition-all duration-500 group-hover:translate-y-4 group-hover:opacity-0">
                             <h3 class="text-2xl font-bold text-white tracking-widest">赵州桥</h3>
                             <p class="text-secondary text-sm">隋代 · 敞肩拱之祖</p>
                         </div>
-                        <div class="absolute inset-0 bg-primary/95 p-6 flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
+                        <div
+                            class="absolute inset-0 bg-primary/95 p-6 flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
                             <h3 class="text-xl font-bold text-white mb-2">赵州桥</h3>
-                            <p class="text-white/80 text-sm mb-6 leading-relaxed">世界现存最早的敞肩石拱桥。通过在大拱上加小拱，减轻自重并极大增强泄洪能力。</p>
-                            <button onclick="showBridgeDetail('赵州桥（安济桥）')" class="px-6 py-2 bg-white text-primary rounded-full font-bold text-sm hover:bg-secondary hover:text-white transition-colors shadow-lg">研读详志</button>
+                            <p class="text-white/80 text-sm mb-6 leading-relaxed">世界现存最早的敞肩石拱桥。通过在大拱上加小拱，减轻自重并极大增强泄洪能力。
+                            </p>
+                            <button onclick="showBridgeDetail('赵州桥（安济桥）')"
+                                class="px-6 py-2 bg-white text-primary rounded-full font-bold text-sm hover:bg-secondary hover:text-white transition-colors shadow-lg">研读详志</button>
                         </div>
                     </div>
-    
+
                     <div class="relative h-64 rounded-2xl overflow-hidden group cursor-pointer shadow-lg">
-                        <img src="images/famous_bridges/luoyang_1.png" onerror="this.src='https://via.placeholder.com/600x400?text=洛阳桥'" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-500 group-hover:opacity-0"></div>
-                        <div class="absolute bottom-0 left-0 right-0 p-6 transition-all duration-500 group-hover:translate-y-4 group-hover:opacity-0">
+                        <img src="images/famous_bridges/luoyang_1.png"
+                            onerror="this.src='https://via.placeholder.com/600x400?text=洛阳桥'"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-500 group-hover:opacity-0">
+                        </div>
+                        <div
+                            class="absolute bottom-0 left-0 right-0 p-6 transition-all duration-500 group-hover:translate-y-4 group-hover:opacity-0">
                             <h3 class="text-2xl font-bold text-white tracking-widest">洛阳桥</h3>
                             <p class="text-secondary text-sm">宋代 · 跨海梁桥先驱</p>
                         </div>
-                        <div class="absolute inset-0 bg-primary/95 p-6 flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
+                        <div
+                            class="absolute inset-0 bg-primary/95 p-6 flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
                             <h3 class="text-xl font-bold text-white mb-2">洛阳桥</h3>
-                            <p class="text-white/80 text-sm mb-6 leading-relaxed">首创“筏型基础”与“种蛎固基”，利用牡蛎生长将石块凝成整体，展现古代生态智慧。</p>
-                            <button onclick="showBridgeDetail('洛阳桥（万安桥）')" class="px-6 py-2 bg-white text-primary rounded-full font-bold text-sm hover:bg-secondary hover:text-white transition-colors shadow-lg">研读详志</button>
+                            <p class="text-white/80 text-sm mb-6 leading-relaxed">
+                                首创“筏型基础”与“种蛎固基”，利用牡蛎生长将石块凝成整体，展现古代生态智慧。</p>
+                            <button onclick="showBridgeDetail('洛阳桥（万安桥）')"
+                                class="px-6 py-2 bg-white text-primary rounded-full font-bold text-sm hover:bg-secondary hover:text-white transition-colors shadow-lg">研读详志</button>
                         </div>
                     </div>
-    
+
                     <div class="relative h-64 rounded-2xl overflow-hidden group cursor-pointer shadow-lg">
-                        <img src="images/famous_bridges/lugou_1.png" onerror="this.src='https://via.placeholder.com/600x400?text=卢沟桥'" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-500 group-hover:opacity-0"></div>
-                        <div class="absolute bottom-0 left-0 right-0 p-6 transition-all duration-500 group-hover:translate-y-4 group-hover:opacity-0">
+                        <img src="images/famous_bridges/lugou_1.png"
+                            onerror="this.src='https://via.placeholder.com/600x400?text=卢沟桥'"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-500 group-hover:opacity-0">
+                        </div>
+                        <div
+                            class="absolute bottom-0 left-0 right-0 p-6 transition-all duration-500 group-hover:translate-y-4 group-hover:opacity-0">
                             <h3 class="text-2xl font-bold text-white tracking-widest">卢沟桥</h3>
                             <p class="text-secondary text-sm">金代 · 联拱石桥杰作</p>
                         </div>
-                        <div class="absolute inset-0 bg-primary/95 p-6 flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
+                        <div
+                            class="absolute inset-0 bg-primary/95 p-6 flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
                             <h3 class="text-xl font-bold text-white mb-2">卢沟桥</h3>
-                            <p class="text-white/80 text-sm mb-6 leading-relaxed">以“卢沟晓月”闻名，桥柱上数百只石狮栩栩如生，其坚固结构历经数百年洪水依然屹立。</p>
-                            <button onclick="showBridgeDetail('卢沟桥')" class="px-6 py-2 bg-white text-primary rounded-full font-bold text-sm hover:bg-secondary hover:text-white transition-colors shadow-lg">研读详志</button>
+                            <p class="text-white/80 text-sm mb-6 leading-relaxed">
+                                以“卢沟晓月”闻名，桥柱上数百只石狮栩栩如生，其坚固结构历经数百年洪水依然屹立。</p>
+                            <button onclick="showBridgeDetail('卢沟桥')"
+                                class="px-6 py-2 bg-white text-primary rounded-full font-bold text-sm hover:bg-secondary hover:text-white transition-colors shadow-lg">研读详志</button>
                         </div>
                     </div>
-    
+
                     <div class="relative h-64 rounded-2xl overflow-hidden group cursor-pointer shadow-lg">
-                        <img src="images/famous_bridges/guangji_1.png" onerror="this.src='https://via.placeholder.com/600x400?text=广济桥'" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-500 group-hover:opacity-0"></div>
-                        <div class="absolute bottom-0 left-0 right-0 p-6 transition-all duration-500 group-hover:translate-y-4 group-hover:opacity-0">
+                        <img src="images/famous_bridges/guangji_1.png"
+                            onerror="this.src='https://via.placeholder.com/600x400?text=广济桥'"
+                            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-500 group-hover:opacity-0">
+                        </div>
+                        <div
+                            class="absolute bottom-0 left-0 right-0 p-6 transition-all duration-500 group-hover:translate-y-4 group-hover:opacity-0">
                             <h3 class="text-2xl font-bold text-white tracking-widest">广济桥</h3>
                             <p class="text-secondary text-sm">宋代 · 启闭浮梁奇观</p>
                         </div>
-                        <div class="absolute inset-0 bg-primary/95 p-6 flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
+                        <div
+                            class="absolute inset-0 bg-primary/95 p-6 flex flex-col justify-center items-center text-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
                             <h3 class="text-xl font-bold text-white mb-2">广济桥</h3>
-                            <p class="text-white/80 text-sm mb-6 leading-relaxed">世界最早的启闭式桥梁，“十八梭船廿四洲”结构集梁、拱、浮桥于一体，极具功能性。</p>
-                            <button onclick="showBridgeDetail('广济桥（湘子桥）')" class="px-6 py-2 bg-white text-primary rounded-full font-bold text-sm hover:bg-secondary hover:text-white transition-colors shadow-lg">研读详志</button>
+                            <p class="text-white/80 text-sm mb-6 leading-relaxed">
+                                世界最早的启闭式桥梁，“十八梭船廿四洲”结构集梁、拱、浮桥于一体，极具功能性。</p>
+                            <button onclick="showBridgeDetail('广济桥（湘子桥）')"
+                                class="px-6 py-2 bg-white text-primary rounded-full font-bold text-sm hover:bg-secondary hover:text-white transition-colors shadow-lg">研读详志</button>
                         </div>
                     </div>
-    
+
                 </div>
-    
+
                 <div class="lg:col-span-4">
-                    <div class="h-full relative rounded-2xl overflow-hidden bg-dark group shadow-2xl border border-secondary/20 flex flex-col">
-                        <div class="absolute inset-0 bg-[url('images/cover/bg1.png')] bg-cover bg-center opacity-30 grayscale group-hover:scale-105 transition-transform duration-1000"></div>
+                    <div
+                        class="h-full relative rounded-2xl overflow-hidden bg-dark group shadow-2xl border border-secondary/20 flex flex-col">
+                        <div
+                            class="absolute inset-0 bg-[url('images/cover/bg1.png')] bg-cover bg-center opacity-30 grayscale group-hover:scale-105 transition-transform duration-1000">
+                        </div>
                         <div class="absolute inset-0 bg-gradient-to-b from-dark/40 via-dark/80 to-dark"></div>
-                        
+
                         <div class="relative z-10 p-8 flex flex-col h-full">
                             <div class="mb-8">
-                                <div class="text-secondary text-xs uppercase tracking-[0.3em] mb-3 font-bold flex items-center gap-2">
+                                <div
+                                    class="text-secondary text-xs uppercase tracking-[0.3em] mb-3 font-bold flex items-center gap-2">
                                     <span class="w-8 h-[1px] bg-secondary"></span> 3D DIGITAL LAB
                                 </div>
-                                <h3 class="text-3xl font-bold text-white mb-4 leading-tight">数字化名桥<br/>虚拟修复实验室</h3>
+                                <h3 class="text-3xl font-bold text-white mb-4 leading-tight">数字化名桥<br />虚拟修复实验室</h3>
                                 <p class="text-secondary/70 text-sm leading-relaxed">
                                     通过高精度三维重构，还原四大名桥内部营建密码。在这里跨越时空，近距离洞察每一块券石、榫卯的力学智慧。
                                 </p>
                             </div>
-    
+
                             <ul class="space-y-4 mb-8 flex-grow">
                                 <li class="flex items-start gap-3 text-xs text-white/60">
-                                    <svg class="w-4 h-4 text-secondary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                                    <svg class="w-4 h-4 text-secondary shrink-0" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path d="M5 13l4 4L19 7"></path>
+                                    </svg>
                                     毫米级结构还原
                                 </li>
                                 <li class="flex items-start gap-3 text-xs text-white/60">
-                                    <svg class="w-4 h-4 text-secondary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                                    <svg class="w-4 h-4 text-secondary shrink-0" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path d="M5 13l4 4L19 7"></path>
+                                    </svg>
                                     360° 全景沉浸式交互
                                 </li>
                                 <li class="flex items-start gap-3 text-xs text-white/60">
-                                    <svg class="w-4 h-4 text-secondary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                                    <svg class="w-4 h-4 text-secondary shrink-0" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path d="M5 13l4 4L19 7"></path>
+                                    </svg>
                                     移动端 AR 增强现实体验
                                 </li>
                             </ul>
-    
-                            <a href="exhibition.html" class="w-full bg-primary hover:bg-white hover:text-primary text-white py-4 rounded-xl font-bold text-center transition-all shadow-xl flex items-center justify-center gap-2 group-hover:-translate-y-1">
+
+                            <a href="exhibition.html"
+                                class="w-full bg-primary hover:bg-white hover:text-primary text-white py-4 rounded-xl font-bold text-center transition-all shadow-xl flex items-center justify-center gap-2 group-hover:-translate-y-1">
                                 <span>步入 3D 展厅</span>
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                </svg>
                             </a>
                         </div>
                     </div>
@@ -1115,63 +1174,6 @@ section {
 
         // 优化后的点击事件：带过渡动画
         // ================= 优化后的点击事件：带过渡动画，保留四大名桥，并动态加载图片 =================
-        ('click', function (params) {
-            const container = document.getElementById('dynastyBridges');
-
-            // 1. 先让容器变透明，准备切换内容
-            container.style.opacity = '0';
-            container.style.transform = 'translateY(20px)';
-            container.style.transition = 'all 0.5s ease';
-
-            setTimeout(() => {
-                const dynasty = params.name;
-                // 取出该朝代的所有桥梁数据
-                const bridges = dynastyData.bridges[dynasty] || [];
-
-                container.innerHTML = ''; dynastyChart.on
-
-                if (bridges.length === 0) {
-                    container.innerHTML = `
-                        <div class="col-span-full text-center py-12 border-2 border-dashed border-secondary/30 rounded-xl">
-                            <p class="text-gray-400">《${dynasty}代桥梁志》正在整理中...</p>
-                        </div>`;
-                } else {
-                    // 直接遍历所有桥梁（不再过滤，保留四大名桥）
-                    bridges.forEach((bridge, index) => {
-                        const card = document.createElement('div');
-                        card.style.animationDelay = `${index * 0.1}s`;
-                        card.className = 'bridge-card p-6 animate-fadeInUp';
-
-                        // 动态获取图片路径（如果映射表中没有，则使用占位图）
-                        const pinyin = listImageMap[bridge.name];
-                        const imageSrc = pinyin
-                            ? `images/famous_bridges/${pinyin}_1.png`
-                            : `https://via.placeholder.com/800x400?text=${bridge.name}`;
-
-                        card.innerHTML = `
-                            <div class="relative h-48 bg-gray-100 rounded-lg mb-4 overflow-hidden group">
-                                <img src="${imageSrc}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                                <div class="absolute top-2 right-2 bg-primary/90 text-white text-xs px-2 py-1 rounded shadow-md">
-                                    ${bridge.material}
-                                </div>
-                            </div>
-                            <h3 class="text-2xl font-bold mb-1 text-dark">${bridge.name}</h3>
-                            <div class="w-10 h-1 bg-primary mb-4"></div>
-                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">${bridge.feature}</p>
-                            <button class="w-full border border-primary text-primary hover:bg-primary hover:text-white px-4 py-2 rounded-lg transition-all" 
-                                    onclick="showBridgeDetail('${bridge.name}')">
-                                研读详情
-                            </button>
-                        `;
-                        container.appendChild(card);
-                    });
-                }
-
-                // 2. 恢复可见并滑入
-                container.style.opacity = '1';
-                container.style.transform = 'translateY(0)';
-            }, 300);
-        });
         // ================= 结束替换 =================
 
         // 图表点击事件：显示对应朝代代表桥梁
@@ -1263,186 +1265,190 @@ section {
         // 模拟省份桥梁数据
         // ================= 新增：各省代表性古桥详细数据档案 =================
         const provinceBridgesData = {
-            '北京': [
+            '北京市': [
                 { name: '卢沟桥', type: '石拱桥', dynasty: '金代', desc: '华北最古老的十一孔联拱石桥，柱头雕刻有形态各异的石狮。' },
                 { name: '十七孔桥', type: '石拱桥', dynasty: '清代', desc: '颐和园核心景观，将皇家园林的宏大与桥梁的实用完美结合。' }
             ],
-            '河北': [
+            '河北省': [
                 { name: '赵州桥', type: '石拱桥', dynasty: '隋代', desc: '世界现存最早、保存最完整的单孔敞肩石拱桥，李春设计。' },
                 { name: '弘济桥', type: '石拱桥', dynasty: '金代', desc: '形制与赵州桥极其相似，被称为赵州桥的“姊妹桥”。' }
             ],
-            '山西': [
+            '山西省': [
                 { name: '晋祠飞梁', type: '梁桥', dynasty: '宋代', desc: '中国罕见的十字形古桥，被梁思成誉为“中国古建筑中的孤例”。' }
             ],
-            '江苏': [
+            '江苏省': [
                 { name: '宝带桥', type: '连拱石桥', dynasty: '唐代始建/明代重修', desc: '中国现存孔数最多的连拱石桥，共53孔，犹如长带卧波。' },
                 { name: '五亭桥', type: '亭桥', dynasty: '清代', desc: '扬州瘦西湖的标志，桥上建有五座风亭，极具南方园林特色。' }
             ],
-            '浙江': [
+            '浙江省': [
                 { name: '八字桥', type: '石梁桥', dynasty: '南宋', desc: '中国最早的“立交桥”，巧妙解决复杂水系的交通问题。' },
                 { name: '泰顺廊桥群', type: '木拱廊桥', dynasty: '明清', desc: '采用类似《清明上河图》中虹桥的编木拱结构，不用一根铁钉。' }
             ],
-            '福建': [
+            '福建省': [
                 { name: '洛阳桥', type: '石梁桥', dynasty: '北宋', desc: '中国第一座跨海石桥，首创“筏型基础”和“种蛎固基”法。' },
                 { name: '安平桥', type: '石梁桥', dynasty: '南宋', desc: '享有“天下无桥长此桥”美誉，是中国现存最长的跨海梁式石桥。' }
             ],
-            '广东': [
+            '广东省': [
                 { name: '广济桥（湘子桥）', type: '浮梁拱结合', dynasty: '南宋', desc: '世界最早的启闭式桥梁，“十八梭船廿四洲”是其最大特色。' }
             ],
-            '四川': [
+            '四川省': [
                 { name: '安澜索桥', type: '竹索桥', dynasty: '宋代/清代', desc: '都江堰水利工程的重要组成部分，中国古代著名的五大桥梁之一。' },
                 { name: '泸定桥', type: '铁索桥', dynasty: '清代', desc: '大渡河上的重要通道，全长103米，由13根铁链组成。' }
             ],
-            '云南': [
+            '云南省': [
                 { name: '双龙桥（十七孔桥）', type: '石拱桥', dynasty: '清代', desc: '建水古城外的名桥，三阁十七孔，造型优美，规模宏大。' }
             ],
-            '广西': [
+            '广西壮族自治区': [
                 { name: '程阳风雨桥', type: '木石风雨桥', dynasty: '民国初年', desc: '侗族建筑艺术的结晶，集桥、廊、亭三者于一身。' }
             ],
-            '甘肃': [
+            '甘肃省': [
                 { name: '渭源灞陵桥', type: '木拱桥', dynasty: '明代/民国重修', desc: '全国独一无二的纯木结构卧桥，被称为“千里渭河第一桥”。' }
             ],
-            '江西': [
+            '江西省': [
                 { name: '清华彩虹桥', type: '廊桥', dynasty: '南宋', desc: '徽州地区现存最古老、最长的廊桥，桥墩呈半船形以分解水流。' }
             ]
         };
 
         // 根据真实数据生成地图省份分布值
         // ================= 导入《中国古桥志》真实桥梁统计数据 =================
+        // ================= 导入《中国古桥志》真实桥梁统计数据 (使用标准全称匹配阿里云GeoJSON) =================
         const provinceData = [
-            { name: '北京', value: 150 },
-            { name: '天津', value: 4 },
-            { name: '河北', value: 32 },
-            { name: '河南', value: 13 },
-            { name: '山东', value: 10 },
-            { name: '山西', value: 19 },
-            { name: '上海', value: 23 },
-            { name: '江苏', value: 115 },
-            { name: '安徽', value: 34 },
-            { name: '湖北', value: 264 },
-            { name: '湖南', value: 140 },
-            { name: '浙江', value: 382 },
-            { name: '福建', value: 309 },
-            { name: '江西', value: 16 },
-            { name: '广东', value: 16 },
-            { name: '广西', value: 18 },
-            { name: '贵州', value: 36 },
-            { name: '云南', value: 22 },
-            { name: '四川', value: 131 },
-            { name: '重庆', value: 5 },
-            { name: '陕西', value: 8 },
-            { name: '辽宁', value: 1 },
-            { name: '内蒙古', value: 1 },
-            { name: '黑龙江', value: 1 }
+            { name: '北京市', value: 150 },
+            { name: '天津市', value: 4 },
+            { name: '河北省', value: 32 },
+            { name: '河南省', value: 13 },
+            { name: '山东省', value: 10 },
+            { name: '山西省', value: 19 },
+            { name: '上海市', value: 23 },
+            { name: '江苏省', value: 115 },
+            { name: '安徽省', value: 34 },
+            { name: '湖北省', value: 264 },
+            { name: '湖南省', value: 140 },
+            { name: '浙江省', value: 382 },
+            { name: '福建省', value: 309 },
+            { name: '江西省', value: 16 },
+            { name: '广东省', value: 16 },
+            { name: '广西壮族自治区', value: 18 },
+            { name: '贵州省', value: 36 },
+            { name: '云南省', value: 22 },
+            { name: '四川省', value: 131 },
+            { name: '重庆市', value: 5 },
+            { name: '陕西省', value: 8 },
+            { name: '辽宁省', value: 1 },
+            { name: '内蒙古自治区', value: 1 },
+            { name: '黑龙江省', value: 1 }
         ];
         // ================= 替换结束 =================
+        // 展示地图数据来源及二维码
+        // ================= 2. 核心函数：展示地图数据合规性说明 =================
 
-        bridgeMap.setOption({
-            backgroundColor: 'transparent',
+        // ================= 核心修改：使用本地 JSON 渲染地图 =================
+        fetch('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json')
+            .then(response => response.json())
+            .then(geoJson => {
+                // 1. 将下载的 JSON 数据注册为 'china' 地图
+                echarts.registerMap('china', geoJson);
 
-            // 定制化、古风的 Tooltip
-            tooltip: {
-                trigger: 'item',
-                backgroundColor: 'rgba(44, 24, 16, 0.85)', // 深棕色半透明背景 (theme dark)
-                borderColor: '#D2B48C', // 辅助色边框
-                borderWidth: 1,
-                padding: [10, 15],
-                textStyle: {
-                    color: '#F5F5DC', // 米黄色文字
-                    fontFamily: '"Noto Serif SC", serif'
-                },
-                formatter: function (params) {
-                    if (params.value) {
-                        return `
-                    <div class="text-center">
-                        <div style="font-size: 18px; color: #D2B48C; font-weight: bold; border-bottom: 1px solid #D2B48C; padding-bottom: 4px; margin-bottom: 4px;">
-                            ${params.name}
-                        </div>
-                        <div>记录遗存：<span style="font-size: 20px; color: #fff; font-weight: bold;">${params.value}</span> 座</div>
-                    </div>
-                `;
-                    } else {
-                        return `${params.name}<br/><span style="color:#aaa;">暂无详细数据</span>`;
-                    }
-                }
-            },
+                // 2. 渲染地图及其颜色、提示框配置
+                bridgeMap.setOption({
+                    backgroundColor: 'transparent',
 
-            // 视觉映射组件 (图例)
-            // 视觉映射组件 (改为分段式图例，解决低数值省份颜色区分度不高的问题)
-            visualMap: {
-                type: 'piecewise',
-                left: '3%',
-                bottom: '5%',
-                itemWidth: 16,
-                itemHeight: 12,
-                itemGap: 10,
-                textStyle: {
-                    color: '#8B4513', // 古铜色
-                    fontFamily: '"Noto Serif SC", serif',
-                    fontWeight: 'bold',
-                    fontSize: 13
-                },
-                // 精确划分数据区间，让 0-100 内部的颜色也有极其明显的层次差异
-                pieces: [
-                    { min: 200, label: '200座以上 (星罗棋布)' },
-                    { min: 100, max: 199, label: '100-199座 (蔚然大观)' },
-                    { min: 30, max: 99, label: '30-99座 (颇具规模)' },
-                    { min: 10, max: 29, label: '10-29座 (星星之火)' },
-                    { min: 1, max: 9, label: '1-9座 (凤毛麟角)' }
-                ],
-                // 色彩过渡：增强了对比度，从浅宣纸色 -> 暖木色 -> 赤砖色 -> 深漆木色
-                inRange: {
-                    color: ['#FDEAD2', '#EBB075', '#D27B41', '#A3431F', '#5C1A06']
-                }
-            },
-
-            series: [{
-                name: '桥梁数量',
-                type: 'map',
-                map: 'china',
-                roam: true, // 开启鼠标缩放和平移
-                scaleLimit: {
-                    min: 1, // 最小缩放比例
-                    max: 3  // 最大缩放比例
-                },
-                // 地图区块的基础样式设计
-                itemStyle: {
-                    normal: {
-                        areaColor: '#FAF0E6', // 无数据省份的底色
-                        borderColor: '#D2B48C', // 浅木色边界线
-                        borderWidth: 1
-                    },
-                    // 鼠标悬停时的样式：增加发光阴影，改变颜色
-                    emphasis: {
-                        areaColor: '#8B4513', // 高亮成主题色
-                        borderColor: '#fff',
+                    // 定制化、古风的 Tooltip
+                    tooltip: {
+                        trigger: 'item',
+                        backgroundColor: 'rgba(44, 24, 16, 0.85)',
+                        borderColor: '#D2B48C',
                         borderWidth: 1,
-                        shadowOffsetX: 0,
-                        shadowOffsetY: 2,
-                        shadowBlur: 10,
-                        shadowColor: 'rgba(0, 0, 0, 0.4)'
-                    }
-                },
-                // 省份名称标签
-                label: {
-                    normal: {
-                        show: false, // 默认不显示文字，保持地图干净
-                        textStyle: { color: '#666' }
-                    },
-                    emphasis: {
-                        show: true, // 悬停时显示文字
+                        padding: [10, 15],
                         textStyle: {
-                            color: '#FFF',
-                            fontWeight: 'bold',
-                            fontSize: 14,
-                            textShadowColor: 'rgba(0,0,0,0.8)',
-                            textShadowBlur: 3
+                            color: '#F5F5DC',
+                            fontFamily: '"Noto Serif SC", serif'
+                        },
+                        formatter: function (params) {
+                            if (params.value) {
+                                return `
+                            <div class="text-center">
+                                <div style="font-size: 18px; color: #D2B48C; font-weight: bold; border-bottom: 1px solid #D2B48C; padding-bottom: 4px; margin-bottom: 4px;">
+                                    ${params.name}
+                                </div>
+                                <div>记录遗存：<span style="font-size: 20px; color: #fff; font-weight: bold;">${params.value}</span> 座</div>
+                            </div>
+                        `;
+                            } else {
+                                return `${params.name}<br/><span style="color:#aaa;">暂无详细数据</span>`;
+                            }
                         }
-                    }
-                },
-                data: provinceData
-            }]
-        });
+                    },
+
+                    // 视觉映射组件 (分段式图例，解决低数值省份颜色区分度不高的问题)
+                    visualMap: {
+                        type: 'piecewise',
+                        left: '3%',
+                        bottom: '5%',
+                        itemWidth: 16,
+                        itemHeight: 12,
+                        itemGap: 10,
+                        textStyle: {
+                            color: '#8B4513',
+                            fontFamily: '"Noto Serif SC", serif',
+                            fontWeight: 'bold',
+                            fontSize: 13
+                        },
+                        pieces: [
+                            { min: 200, label: '200座以上 (星罗棋布)' },
+                            { min: 100, max: 199, label: '100-199座 (蔚然大观)' },
+                            { min: 30, max: 99, label: '30-99座 (颇具规模)' },
+                            { min: 10, max: 29, label: '10-29座 (星星之火)' },
+                            { min: 1, max: 9, label: '1-9座 (凤毛麟角)' }
+                        ],
+                        inRange: {
+                            color: ['#FDEAD2', '#EBB075', '#D27B41', '#A3431F', '#5C1A06']
+                        }
+                    },
+                    // ================= 修改：地图审图号（增加点击交互） =================
+                    // ================= 1. 修改：地图审图号（增加点击交互） =================
+                    series: [{
+                        name: '桥梁数量',
+                        type: 'map',
+                        map: 'china', // 这里与上面 registerMap 的名字对应
+                        roam: true,
+                        scaleLimit: { min: 1, max: 3 },
+                        itemStyle: {
+                            normal: {
+                                areaColor: '#FAF0E6',
+                                borderColor: '#D2B48C',
+                                borderWidth: 1
+                            },
+                            emphasis: {
+                                areaColor: '#8B4513',
+                                borderColor: '#fff',
+                                borderWidth: 1,
+                                shadowOffsetX: 0,
+                                shadowOffsetY: 2,
+                                shadowBlur: 10,
+                                shadowColor: 'rgba(0, 0, 0, 0.4)'
+                            }
+                        },
+                        label: {
+                            normal: { show: false, textStyle: { color: '#666' } },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    color: '#FFF',
+                                    fontWeight: 'bold',
+                                    fontSize: 14,
+                                    textShadowColor: 'rgba(0,0,0,0.8)',
+                                    textShadowBlur: 3
+                                }
+                            }
+                        },
+                        data: provinceData
+                    }]
+                });
+            })
+            .catch(error => {
+                console.error("【本地环境提示】地图加载失败。如果您是双击打开的HTML，请改用 VS Code 的 Live Server 插件运行，或者将项目部署到服务器上。", error);
+            });
 
         // 地图点击事件：显示省份桥梁
         // ================= 优化地图点击事件 =================
@@ -1793,6 +1799,7 @@ section {
                 </div>
             `;
         });
+
     </script>
 </body>
 
