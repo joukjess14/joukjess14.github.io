@@ -1477,7 +1477,7 @@ section {
         // ================= 2. 核心函数：展示地图数据合规性说明 =================
 
         // ================= 核心修改：使用本地 JSON 渲染地图 =================
-        fetch('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json')
+        fetch('data/china.json')
             .then(response => response.json())
             .then(geoJson => {
                 // 1. 将下载的 JSON 数据注册为 'china' 地图
