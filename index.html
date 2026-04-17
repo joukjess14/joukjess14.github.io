@@ -39,6 +39,32 @@
     <style type="text/tailwindcss">
         /* ============ 优化：AI 导览员样式重塑 ============ */
         /* 文字跳出时的闪烁光标 */
+        /* AI 加载动画：旋转的圆环 */
+.ai-loader {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(139, 69, 19, 0.2);
+    border-top-color: #8B4513; /* 使用 primary 色 */
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* 闪烁光标效果（已有逻辑的补充） */
+.cursor-blink::after {
+    content: '';
+    display: inline-block;
+    width: 2px;
+    height: 14px;
+    background: #8B4513;
+    margin-left: 2px;
+    animation: blink 0.8s infinite;
+}
 .typing-cursor {
     display: inline-block;
     width: 2px;
@@ -345,7 +371,7 @@ section {
 
 <body class="bg-[#F5F5DC] font-chinese text-dark">
     <!-- 导航栏 -->
-    <header class="sticky top-0 z-50 bg-gradient-to-r from-primary to-[#663300] text-white shadow-md">
+    <header class="sticky top-0 z-50 bg-gradient-to-r from-primary to-[#663300] text-white border-b border-black/10">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <h1 class="text-2xl font-bold tracking-wider">中国古代桥梁文化博物馆</h1>
 
@@ -983,18 +1009,17 @@ section {
     <div id="bridgeModal"
         class="fixed inset-0 z-[1000] bg-black/60 backdrop-blur-none transition-all duration-500 ease-out hidden flex items-center justify-center p-4">
 
-        <!-- 2. 内容盒子：增加初始缩放 scale-95 和透明度 opacity-0 -->
         <div id="bridgeModalContent"
-            class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transform scale-95 opacity-0 transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1)">
-            <div class="p-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 id="bridgeModalTitle" class="text-3xl font-bold text-dark border-l-4 border-primary pl-4"></h3>
-                    <button onclick="closeModal('bridgeModal')"
-                        class="text-gray-400 hover:text-primary transition-colors text-4xl">&times;</button>
-                </div>
-                <div id="bridgeModalBody" class="space-y-6">
-                    <!-- 动态填充内容 -->
-                </div>
+            class="bg-white rounded-[2rem] max-w-4xl w-full max-h-[90vh] flex flex-col transform scale-95 opacity-0 transition-all duration-500 cubic-bezier overflow-hidden shadow-2xl">
+
+            <div class="p-8 pb-4 bg-white z-10 flex justify-between items-center border-b border-secondary/10 shrink-0">
+                <h3 id="bridgeModalTitle"
+                    class="text-3xl font-bold text-dark border-l-8 border-primary pl-4 tracking-tight"></h3>
+                <button onclick="closeModal('bridgeModal')"
+                    class="text-gray-300 hover:text-primary transition-colors text-5xl leading-none">&times;</button>
+            </div>
+
+            <div id="bridgeModalBody" class="flex-1 overflow-y-auto p-8 pt-4 space-y-8 hide-scrollbar">
             </div>
         </div>
     </div>
@@ -1072,36 +1097,34 @@ section {
         // 弹窗控制
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
-            const content = modal.querySelector('div'); // 找到内容盒子
+            const content = document.getElementById('bridgeModalContent');
 
-            // 1. 显示容器
+            // 计算滚动条宽度并锁定，防止位移产生的缝隙
+            const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+            document.body.style.setProperty('--scrollbar-width', scrollBarWidth + 'px');
+            document.body.classList.add('modal-open');
+
             modal.classList.remove('hidden');
-
-            // 2. 强制浏览器重绘 (Trick)，然后激活状态
             setTimeout(() => {
-                modal.classList.add('backdrop-blur-md'); // 增加背景模糊
+                modal.classList.add('backdrop-blur-md');
                 content.classList.remove('scale-95', 'opacity-0');
                 content.classList.add('scale-100', 'opacity-100');
             }, 10);
-
-            document.body.style.overflow = 'hidden';
         }
 
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
-            const content = modal.querySelector('div');
+            const content = document.getElementById('bridgeModalContent');
 
-            // 1. 触发退场动画
             modal.classList.remove('backdrop-blur-md');
             content.classList.remove('scale-100', 'opacity-100');
             content.classList.add('scale-95', 'opacity-0');
 
-            // 2. 动画结束后隐藏 DOM
             setTimeout(() => {
                 modal.classList.add('hidden');
-            }, 500); // 对应 duration-500
-
-            document.body.style.overflow = 'auto';
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = 'auto'; // 恢复滚动
+            }, 500);
         }
         // ====================== 请填写你的信息 ======================
         // ================= 智能导览员核心逻辑 (修复 Headers 报错 & 增加流式输出) =================
@@ -1162,15 +1185,17 @@ section {
             input.value = '';
             isGenerating = true;
 
-            // 2. 【核心修复】创建一个带头像的流式回复容器
+            // 2. 创建 AI 回复容器，初始状态显示加载图标
             const wrapper = document.createElement('div');
             wrapper.className = 'flex items-start gap-2 mb-4 animate-fade-in';
             wrapper.innerHTML = `
         <div class="w-8 h-8 shrink-0 rounded-full bg-primary flex items-center justify-center text-[10px] text-white shadow-md border border-secondary/30">博</div>
-        <div class="msg-bot cursor-blink" style="margin-bottom:0"></div>
+        <div class="msg-bot" style="margin-bottom:0">
+            <span class="ai-loader" id="current-loader"></span>
+        </div>
     `;
             body.appendChild(wrapper);
-            const botMsgDiv = wrapper.querySelector('.msg-bot'); // 这里的 botMsgDiv 是我们要注入文字的地方
+            const botMsgDiv = wrapper.querySelector('.msg-bot');
             body.scrollTop = body.scrollHeight;
 
             try {
@@ -1190,6 +1215,7 @@ section {
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 let fullContent = "";
+                let hasStarted = false; // 标记是否已经开始接收文字
 
                 while (true) {
                     const { done, value } = await reader.read();
@@ -1204,16 +1230,25 @@ section {
                             try {
                                 const json = JSON.parse(dataStr);
                                 const content = json.choices[0].delta.content || "";
-                                fullContent += content;
-                                // 实时注入文字到带头像的容器中
-                                botMsgDiv.innerText = fullContent;
-                                body.scrollTop = body.scrollHeight;
+
+                                if (content && !hasStarted) {
+                                    // 【关键点】接收到第一个 token，移除加载图标并添加光标类
+                                    hasStarted = true;
+                                    botMsgDiv.innerHTML = ""; // 清空 Loader
+                                    botMsgDiv.classList.add('cursor-blink');
+                                }
+
+                                if (hasStarted) {
+                                    fullContent += content;
+                                    botMsgDiv.innerText = fullContent;
+                                    body.scrollTop = body.scrollHeight;
+                                }
                             } catch (e) { }
                         }
                     }
                 }
             } catch (e) {
-                botMsgDiv.innerText = "抱歉，由于灵力波动（网络错误），小桥暂时无法作答。";
+                botMsgDiv.innerHTML = "抱歉，由于灵力波动（网络错误），小桥暂时无法作答。";
             } finally {
                 isGenerating = false;
                 botMsgDiv.classList.remove('cursor-blink');
@@ -1795,18 +1830,8 @@ section {
                     "dynasty": "宋代始建/明代改建",
                     "desc": "青州七孔石拱桥，宋建明改，栏板雕二十四孝图，工艺精湛。"
                 },
-                {
-                    "name": "兴隆桥",
-                    "type": "石拱桥",
-                    "dynasty": "清代",
-                    "desc": "滕州单孔石拱桥，清乾隆年间建造，拱券规整，桥台凹形。"
-                },
-                {
-                    "name": "罗锅桥",
-                    "type": "石拱桥",
-                    "dynasty": "不详",
-                    "desc": "枣庄单孔石拱桥，桥面高隆，无栏杆，半圆形拱券，造型独特。"
-                }
+                { "name": "兴隆桥", "type": "石拱桥", "dynasty": "清代", "desc": "滕州单孔石拱桥，清乾隆年间建造，拱券规整，桥台凹形。" },
+                { "name": "罗锅桥", "type": "石拱桥", "dynasty": "不详", "desc": "枣庄单孔石拱桥，桥面高隆，无栏杆，半圆形拱券，造型独特。" }
             ],
             '山西省': [
                 { name: '晋祠飞梁', type: '梁桥', dynasty: '宋代', desc: '中国罕见的十字形古桥，被梁思成誉为“中国古建筑中的孤例”。' },
@@ -2376,33 +2401,43 @@ section {
                             </div>
                             生平纵览
                         </h4>
-                        <p class="text-gray-700 leading-relaxed text-lg pl-2 border-l-2 border-secondary/50">${data.bio}</p>
+                        <p class="text-gray-700 leading-relaxed text-lg">${data.bio}</p>
                     </div>
 
-                    <div class="bg-blue-50/40 p-6 rounded-2xl border border-blue-100 shadow-sm">
+                    <div class="bg-blue-50/40 p-6 rounded-2xl border border-blue-100 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-5 pointer-events-none text-blue-700">
+                            <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/>
+                            </svg>
+                        </div>
                         <h4 class="text-2xl font-bold text-[#1E3A8A] mb-4 flex items-center gap-3">
                             <div class="p-2 bg-blue-100 rounded-lg text-blue-700">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
                             </div>
                             主要成就与技术创举
                         </h4>
-                        <div class="text-gray-700 leading-relaxed text-lg space-y-2 pl-2">
+                        <div class="text-gray-700 leading-relaxed text-lg space-y-2 pl-2 relative z-10">
                             ${data.contribution}
                         </div>
                     </div>
 
-                    <div class="bg-orange-50/50 p-6 rounded-2xl border border-orange-100 shadow-sm">
+                    <div class="bg-orange-50/50 p-6 rounded-2xl border border-orange-100 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-5 pointer-events-none text-orange-700">
+                            <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                            </svg>
+                        </div>
                         <h4 class="text-2xl font-bold text-[#9A3412] mb-4 flex items-center gap-3">
                             <div class="p-2 bg-orange-100 rounded-lg text-orange-700">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
                             </div>
                             代表作品与影响
                         </h4>
-                        <p class="text-gray-700 leading-relaxed text-lg pl-2">${data.works}</p>
+                        <p class="text-gray-700 leading-relaxed text-lg pl-2 relative z-10">${data.works}</p>
                     </div>
                 </div>
             `;
-            openModal('bridgeModal'); // 复用您代码中已有的遮罩层和弹窗
+            openModal('bridgeModal');
         }
 
         function showBookDetail(name) {
